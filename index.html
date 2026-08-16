@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>BIOMED Orthopedics — Precision Implants &amp; Surgical Instruments</title>
+<meta name="description" content="BIOMED — Manufacturer of orthopaedic implants and surgical instruments since 1989. Stainless steel & titanium implants, gamma-sterilized, exported worldwide.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050810;
+  --bg2:#0a0f1e;
+  --panel:#0d1424;
+  --panel2:#0f1830;
+  --cyan:#00d9ff;
+  --blue:#3b6bff;
+  --silver:#c7d0da;
+  --white:#f4f7fb;
+  --muted:#8b98b0;
+  --line:rgba(255,255,255,0.08);
+  --glow: 0 0 40px rgba(0,217,255,0.35);
+  --mono:'JetBrains Mono', monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background-color:var(--bg);
+  background-image:
+    linear-gradient(rgba(0,217,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,217,255,0.05) 1px, transparent 1px);
+  background-size:44px 44px;
+  background-position:center top;
+  color:var(--white);
+  font-family:'Inter',sans-serif;
+  overflow-x:hidden;
+  cursor:none;
+}
+h1,h2,h3,h4,.brand,.stat-num{font-family:'Space Grotesk',sans-serif;}
+a{color:inherit;text-decoration:none;}
+img{max-width:100%;display:block;}
+::selection{background:var(--cyan);color:#000;}
+.mono{font-family:var(--mono);}
+
+/* custom cursor: surgical reticle */
+#cursor{
+  position:fixed;top:0;left:0;width:22px;height:22px;border:1.5px solid var(--cyan);
+  border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);
+  transition:width .2s,height .2s,background .2s,border-color .2s;
+  mix-blend-mode:difference;
+}
+#cursor::before,#cursor::after{content:'';position:absolute;background:var(--cyan);}
+#cursor::before{top:50%;left:-9px;width:6px;height:1px;transform:translateY(-50%);}
+#cursor::after{top:-9px;left:50%;width:1px;height:6px;transform:translateX(-50%);}
+#cursor-dot{
+  position:fixed;top:0;left:0;width:4px;height:4px;background:var(--cyan);
+  border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);
+  box-shadow:0 0 6px var(--cyan);
+}
+@media(max-width:900px){#cursor,#cursor-dot{display:none;}body{cursor:auto;}}
+
+/* HUD scanner-frame corners (for key visual containers) */
+.hud-frame{position:relative;}
+.hud-frame::before,.hud-frame::after{
+  content:'';position:absolute;width:20px;height:20px;pointer-events:none;z-index:3;
+  border:1.5px solid var(--cyan);opacity:.55;
+}
+.hud-frame::before{top:8px;left:8px;border-right:none;border-bottom:none;}
+.hud-frame::after{bottom:8px;right:8px;border-left:none;border-top:none;}
+.hud-frame .hud-tag{
+  position:absolute;top:8px;right:8px;font-family:var(--mono);font-size:9.5px;letter-spacing:1.5px;
+  color:var(--cyan);opacity:.7;text-transform:uppercase;z-index:3;background:rgba(5,8,16,0.5);
+  padding:3px 7px;border:1px solid rgba(0,217,255,0.25);border-radius:3px;
+}
+
+/* certification / material marquee */
+.cert-ticker{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(0,217,255,0.025);overflow:hidden;padding:15px 0;position:relative;z-index:2;}
+.cert-track{display:flex;gap:52px;white-space:nowrap;width:max-content;animation:cert-scroll 28s linear infinite;}
+.cert-track span{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;display:inline-flex;align-items:center;gap:10px;}
+.cert-track span::before{content:'+';color:var(--cyan);font-weight:700;}
+@keyframes cert-scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* hero technical annotations */
+.hero-annotations{position:absolute;inset:0;z-index:2;pointer-events:none;}
+.hero-annotation{position:absolute;top:0;left:0;display:flex;align-items:center;gap:8px;opacity:0;transition:opacity .5s ease;will-change:transform,opacity;}
+.hero-annotation .dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);flex-shrink:0;}
+.hero-annotation .aline{width:24px;height:1px;background:linear-gradient(90deg,var(--cyan),transparent);flex-shrink:0;}
+.hero-annotation .atxt{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:1.3px;color:var(--silver);text-transform:uppercase;
+  background:rgba(5,8,16,0.6);padding:4px 9px;border:1px solid rgba(0,217,255,0.25);border-radius:3px;
+  backdrop-filter:blur(3px);white-space:nowrap;
+}
+
+/* loader */
+#loader{
+  position:fixed;inset:0;background:var(--bg);z-index:10000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+  transition:opacity .8s ease, visibility .8s ease;
+}
+#loader.hide{opacity:0;visibility:hidden;}
+.loader-ring{width:64px;height:64px;border:2px solid var(--line);border-top:2px solid var(--cyan);border-radius:50%;animation:spin 1s linear infinite;}
+.loader-text{letter-spacing:6px;font-size:12px;color:var(--muted);text-transform:uppercase;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* nav */
+nav{
+  position:fixed;top:0;left:0;width:100%;z-index:1000;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 5%;
+  background:rgba(5,8,16,0.5);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid transparent;
+  transition:border-color .4s, background .4s, padding .4s;
+}
+nav.scrolled{background:rgba(5,8,16,0.85);border-bottom:1px solid var(--line);padding:14px 5%;}
+.brand{font-size:22px;font-weight:700;letter-spacing:2px;display:flex;align-items:center;gap:10px;}
+.brand span{color:var(--cyan);}
+.brand .badge{font-family:'Inter';font-size:9px;letter-spacing:2px;color:var(--muted);border:1px solid var(--line);padding:3px 7px;border-radius:20px;text-transform:uppercase;}
+.nav-links{display:flex;gap:36px;list-style:none;}
+.nav-links a{
+  font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--silver);
+  position:relative;padding-bottom:4px;font-weight:500;
+}
+.nav-links a::after{
+  content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:var(--cyan);
+  transition:width .3s ease;
+}
+.nav-links a:hover::after{width:100%;}
+.nav-links a:hover{color:var(--white);}
+.nav-cta{
+  border:1px solid var(--cyan);color:var(--cyan);padding:10px 22px;border-radius:30px;
+  font-size:12px;letter-spacing:1.5px;text-transform:uppercase;transition:all .3s;
+}
+.nav-cta:hover{background:var(--cyan);color:#001018;box-shadow:var(--glow);}
+.burger{display:none;flex-direction:column;gap:5px;cursor:pointer;z-index:1001;}
+.burger span{width:24px;height:2px;background:var(--white);transition:.3s;}
+@media(max-width:900px){
+  .nav-links,.nav-cta{display:none;}
+  .burger{display:flex;}
+  .nav-links.open{
+    display:flex;position:fixed;top:0;right:0;height:100vh;width:70%;background:var(--panel);
+    flex-direction:column;justify-content:center;align-items:flex-start;padding:40px;gap:26px;
+    border-left:1px solid var(--line);
+  }
+}
+
+/* hero */
+#hero{
+  position:relative;height:100vh;width:100%;display:flex;align-items:center;overflow:hidden;
+  background:radial-gradient(ellipse at 70% 30%, #0b1330 0%, var(--bg) 60%);
+}
+#hero-canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;}
+.hero-inner{position:relative;z-index:2;padding:0 5%;max-width:760px;}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;color:var(--cyan);font-size:12px;
+  letter-spacing:3px;text-transform:uppercase;margin-bottom:22px;font-weight:600;
+}
+.eyebrow::before{content:'';width:26px;height:1px;background:var(--cyan);}
+.hero-inner h1{
+  font-size:clamp(40px,6.5vw,84px);line-height:1.02;font-weight:700;margin-bottom:22px;
+  letter-spacing:-1px;
+}
+.hero-inner h1 .grad{
+  background:linear-gradient(90deg,var(--cyan),var(--blue));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero-inner p{color:var(--muted);font-size:18px;max-width:520px;margin-bottom:36px;line-height:1.7;font-weight:300;}
+.hero-btns{display:flex;gap:18px;flex-wrap:wrap;}
+.btn{
+  position:relative;padding:16px 34px;border-radius:40px;font-size:13px;letter-spacing:1.5px;
+  text-transform:uppercase;font-weight:600;transition:transform .3s, box-shadow .3s;
+  display:inline-flex;align-items:center;gap:10px;
+}
+.btn-primary{background:linear-gradient(90deg,var(--cyan),var(--blue));color:#00121c;}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(0,217,255,0.3);}
+.btn-ghost{border:1px solid var(--line);color:var(--white);}
+.btn-ghost:hover{border-color:var(--cyan);color:var(--cyan);transform:translateY(-3px);}
+.scroll-hint{
+  position:absolute;bottom:36px;left:5%;z-index:2;display:flex;align-items:center;gap:12px;
+  color:var(--muted);font-size:11px;letter-spacing:2px;text-transform:uppercase;
+}
+.scroll-line{width:1px;height:40px;background:linear-gradient(var(--cyan),transparent);animation:scrolldown 2s infinite;}
+@keyframes scrolldown{0%{opacity:0;transform:translateY(-10px);}50%{opacity:1;}100%{opacity:0;transform:translateY(20px);}}
+.hero-tags{position:absolute;right:5%;bottom:60px;z-index:2;display:flex;flex-direction:column;gap:10px;align-items:flex-end;}
+@media(max-width:900px){.hero-tags{display:none;}}
+.hero-tag{
+  font-size:11px;letter-spacing:1.5px;color:var(--silver);border:1px solid var(--line);
+  padding:8px 16px;border-radius:20px;background:rgba(255,255,255,0.03);text-transform:uppercase;
+}
+
+/* section shared */
+section{position:relative;padding:120px 5%;}
+.section-tag{color:var(--cyan);font-size:11.5px;letter-spacing:3px;text-transform:uppercase;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px;font-family:var(--mono);}
+.section-tag::before{content:'//';opacity:.6;}
+.pcode, .stat-label, .cat-tab, .country-chip, .product-body .pcode{font-family:var(--mono);}
+.section-head{max-width:640px;margin-bottom:64px;}
+.section-head h2{font-size:clamp(30px,4vw,48px);font-weight:700;line-height:1.15;letter-spacing:-0.5px;}
+.section-head p{color:var(--muted);margin-top:16px;font-size:16px;line-height:1.7;font-weight:300;}
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s ease, transform .8s ease;}
+.reveal.in{opacity:1;transform:translateY(0);}
+
+/* stats */
+#stats{
+  padding:80px 5%;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,transparent,rgba(0,217,255,0.03),transparent);
+}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:30px;text-align:center;}
+@media(max-width:800px){.stats-grid{grid-template-columns:repeat(2,1fr);}}
+.stat-num{font-size:clamp(34px,4vw,54px);font-weight:700;color:var(--white);}
+.stat-num span{color:var(--cyan);}
+.stat-label{color:var(--muted);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;margin-top:8px;}
+
+/* about */
+#about{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center;}
+@media(max-width:900px){#about{grid-template-columns:1fr;gap:40px;}}
+.about-visual{
+  position:relative;height:420px;border-radius:20px;border:1px solid var(--line);
+  background:linear-gradient(145deg,var(--panel),var(--panel2));overflow:hidden;
+}
+#about-canvas{width:100%;height:100%;}
+.about-text p{color:var(--muted);line-height:1.85;font-size:16px;margin-bottom:20px;font-weight:300;}
+.about-list{list-style:none;margin-top:28px;display:grid;gap:14px;}
+.about-list li{display:flex;gap:12px;align-items:flex-start;color:var(--silver);font-size:14px;}
+.about-list li::before{content:'';min-width:8px;height:8px;border-radius:2px;background:var(--cyan);margin-top:5px;transform:rotate(45deg);box-shadow:0 0 10px var(--cyan);}
+
+/* vision / mission / values */
+.vm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:60px;}
+@media(max-width:900px){.vm-grid{grid-template-columns:1fr;}}
+.vm-card{border:1px solid var(--line);border-radius:16px;padding:30px;background:rgba(255,255,255,0.02);transition:transform .3s, border-color .3s;}
+.vm-card:hover{transform:translateY(-4px);border-color:rgba(0,217,255,0.3);}
+.vm-card h4{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:18px;font-weight:700;}
+.vm-card ul{list-style:none;display:grid;gap:12px;}
+.vm-card li{display:flex;gap:10px;color:var(--silver);font-size:13.5px;line-height:1.5;}
+.vm-card li::before{content:'';min-width:6px;height:6px;border-radius:50%;background:var(--cyan);margin-top:6px;box-shadow:0 0 8px var(--cyan);flex-shrink:0;}
+.partner-block{margin-top:60px;border:1px solid var(--line);border-radius:18px;padding:40px;background:linear-gradient(160deg,var(--panel),var(--bg2));}
+.partner-block h4{font-size:20px;font-weight:700;margin-bottom:14px;}
+.partner-block p{color:var(--muted);font-size:14.5px;line-height:1.8;max-width:820px;}
+.partner-block p+p{margin-top:14px;}
+
+/* products */
+.cat-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px;}
+.cat-tab{padding:10px 20px;border:1px solid var(--line);border-radius:30px;font-size:12.5px;letter-spacing:.4px;color:var(--muted);cursor:pointer;transition:.3s;background:rgba(255,255,255,0.02);white-space:nowrap;user-select:none;}
+.cat-tab:hover{color:var(--white);border-color:rgba(0,217,255,0.3);}
+.cat-tab.active{background:linear-gradient(90deg,var(--cyan),var(--blue));color:#00121c;border-color:transparent;font-weight:700;}
+.cat-tab .count{opacity:.75;margin-left:5px;font-size:11px;}
+
+.product-search{display:flex;align-items:center;gap:10px;margin-bottom:36px;border:1px solid var(--line);border-radius:30px;padding:11px 20px;max-width:360px;background:rgba(255,255,255,0.02);transition:border-color .3s;}
+.product-search:focus-within{border-color:var(--cyan);}
+.product-search input{background:none;border:none;outline:none;color:var(--white);font-family:'Inter';font-size:13px;width:100%;}
+.product-search svg{width:16px;height:16px;color:var(--muted);flex-shrink:0;}
+
+.products-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;}
+@media(max-width:1100px){.products-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:800px){.products-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:520px){.products-grid{grid-template-columns:1fr;}}
+
+.product-card{
+  position:relative;border:1px solid var(--line);border-radius:16px;overflow:hidden;
+  background:linear-gradient(155deg,var(--panel),var(--bg2));
+  transition:border-color .35s, box-shadow .35s, transform .35s;
+  cursor:pointer;
+}
+.product-card:hover{border-color:rgba(0,217,255,0.4);box-shadow:0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(0,217,255,0.08);transform:translateY(-4px);}
+.product-img{position:relative;width:100%;height:170px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.product-img img{width:100%;height:100%;object-fit:contain;padding:14px;transition:transform .5s;}
+.product-card:hover .product-img img{transform:scale(1.08);}
+.product-img .img-fallback{color:#0a0f1e;font-size:11px;letter-spacing:1px;text-transform:uppercase;text-align:center;padding:0 14px;font-weight:600;}
+.product-body{padding:18px 18px 20px;}
+.product-body h4{font-size:14.5px;font-weight:600;line-height:1.35;min-height:38px;}
+.product-body .pcode{color:var(--cyan);font-size:11px;letter-spacing:1px;margin-top:8px;display:block;font-weight:600;}
+.product-more{display:inline-flex;align-items:center;gap:6px;margin-top:12px;color:var(--muted);font-size:11.5px;letter-spacing:1px;text-transform:uppercase;font-weight:600;transition:color .25s;}
+.product-card:hover .product-more{color:var(--cyan);}
+.no-results{color:var(--muted);padding:60px 0;text-align:center;grid-column:1/-1;}
+.results-count{color:var(--muted);font-size:12.5px;margin-bottom:20px;letter-spacing:.5px;}
+
+/* product modal */
+#productModal{
+  position:fixed;inset:0;z-index:5000;display:none;align-items:center;justify-content:center;padding:24px;
+  background:rgba(3,5,10,0.82);backdrop-filter:blur(8px);
+}
+#productModal.open{display:flex;}
+.modal-box{
+  max-width:880px;width:100%;max-height:86vh;overflow-y:auto;border:1px solid var(--line);border-radius:20px;
+  background:linear-gradient(160deg,var(--panel),var(--bg2));position:relative;
+  display:grid;grid-template-columns:1fr 1fr;
+}
+@media(max-width:760px){.modal-box{grid-template-columns:1fr;}}
+.modal-close{
+  position:absolute;top:16px;right:16px;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);
+  background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;color:var(--white);
+}
+.modal-close:hover{border-color:var(--cyan);color:var(--cyan);}
+.modal-img{background:#fff;display:flex;align-items:center;justify-content:center;padding:30px;min-height:260px;}
+.modal-img img{width:100%;height:100%;object-fit:contain;max-height:400px;}
+.modal-info{padding:36px;}
+.modal-info .cat-badge{color:var(--cyan);font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;}
+.modal-info h3{font-size:23px;font-weight:700;margin:12px 0 14px;line-height:1.25;}
+.modal-info .material{color:var(--muted);font-size:13.5px;line-height:1.6;margin-bottom:20px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,0.02);}
+.modal-table-wrap{max-height:240px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;}
+.modal-table{width:100%;border-collapse:collapse;}
+.modal-table th{position:sticky;top:0;text-align:left;color:var(--muted);font-size:10.5px;letter-spacing:1px;text-transform:uppercase;padding:10px 12px;border-bottom:1px solid var(--line);background:#0d1424;}
+.modal-table td{padding:9px 12px;font-size:13px;color:var(--silver);border-bottom:1px solid rgba(255,255,255,0.04);}
+.modal-table tr:hover td{color:var(--white);background:rgba(0,217,255,0.04);}
+.modal-types{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+.modal-types span{border:1px solid var(--line);padding:6px 14px;border-radius:20px;font-size:12px;color:var(--silver);}
+.modal-cta{margin-top:24px;display:flex;gap:12px;flex-wrap:wrap;}
+.modal-source{margin-top:16px;font-size:11.5px;color:var(--muted);}
+.modal-source a{color:var(--cyan);}
+
+/* instruments strip */
+#instruments{border-top:1px solid var(--line);}
+.instr-intro{color:var(--muted);font-size:14.5px;line-height:1.7;max-width:640px;margin-bottom:44px;}
+.instr-doc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+@media(max-width:900px){.instr-doc-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:560px){.instr-doc-grid{grid-template-columns:1fr;}}
+.doc-card{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:linear-gradient(155deg,var(--panel),var(--bg2));transition:transform .3s, border-color .3s;}
+.doc-card:hover{border-color:rgba(0,217,255,.4);transform:translateY(-5px);box-shadow:0 18px 40px rgba(0,0,0,0.4);}
+.doc-thumb{height:210px;background:#fff;display:flex;align-items:center;justify-content:center;padding:14px;}
+.doc-thumb img{width:100%;height:100%;object-fit:contain;}
+.doc-body{padding:22px;}
+.doc-body h4{font-size:15px;font-weight:600;margin-bottom:14px;line-height:1.4;}
+.doc-body a{display:inline-flex;align-items:center;gap:6px;color:var(--cyan);font-size:11.5px;letter-spacing:1px;font-weight:700;text-transform:uppercase;}
+.instr-note{margin-top:36px;color:var(--muted);font-size:13.5px;}
+.instr-note a{color:var(--cyan);}
+
+/* why / features */
+.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+@media(max-width:900px){.feature-grid{grid-template-columns:1fr;}}
+.feature{border:1px solid var(--line);border-radius:16px;padding:32px;background:rgba(255,255,255,0.015);transition:transform .3s, border-color .3s;}
+.feature:hover{transform:translateY(-6px);border-color:rgba(0,217,255,0.3);}
+.feature .num{font-family:'Space Grotesk';font-size:38px;color:rgba(0,217,255,0.35);font-weight:700;margin-bottom:14px;}
+.feature h4{font-size:18px;margin-bottom:10px;font-weight:600;}
+.feature p{color:var(--muted);font-size:14px;line-height:1.7;}
+
+/* testimonials */
+#testimonials{border-top:1px solid var(--line);}
+.test-track{display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px;}
+.test-track::-webkit-scrollbar{height:5px;}
+.test-track::-webkit-scrollbar-thumb{background:var(--line);border-radius:10px;}
+.test-card{
+  min-width:min(420px,85vw);scroll-snap-align:start;border:1px solid var(--line);border-radius:16px;
+  padding:32px;background:linear-gradient(160deg,var(--panel),var(--bg2));
+}
+.test-card .quote{font-size:30px;color:var(--cyan);opacity:.5;line-height:0;margin-bottom:14px;display:block;}
+.test-card p{color:var(--silver);font-size:15px;line-height:1.75;margin-bottom:22px;font-weight:300;}
+.test-who{display:flex;align-items:center;gap:12px;}
+.avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--blue));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#001;}
+.test-who h5{font-size:14px;font-weight:600;}
+.test-who span{font-size:12px;color:var(--muted);}
+
+/* globe */
+.globe-section{display:grid;grid-template-columns:0.85fr 1.15fr;gap:60px;align-items:center;margin-top:90px;padding-top:70px;border-top:1px solid var(--line);}
+@media(max-width:900px){.globe-section{grid-template-columns:1fr;gap:36px;}}
+.globe-copy h3{font-size:clamp(24px,3vw,34px);font-weight:700;margin-bottom:16px;line-height:1.2;}
+.globe-copy p{color:var(--muted);font-size:15px;line-height:1.75;font-weight:300;max-width:440px;}
+.country-list{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px;}
+.country-chip{
+  display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:30px;padding:9px 16px 9px 12px;
+  font-size:12.5px;color:var(--silver);cursor:pointer;transition:.3s;background:rgba(255,255,255,0.02);
+}
+.country-chip .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);flex-shrink:0;}
+.country-chip.hq .dot{background:#ffcf5c;box-shadow:0 0 8px #ffcf5c;}
+.country-chip:hover{border-color:rgba(0,217,255,0.4);color:var(--white);transform:translateY(-2px);}
+.country-chip.active{background:linear-gradient(90deg,var(--cyan),var(--blue));color:#00121c;border-color:transparent;font-weight:600;}
+.country-chip.active .dot{background:#00121c;box-shadow:none;}
+
+.globe-visual{display:flex;justify-content:center;}
+.globe-canvas-wrap{position:relative;width:100%;max-width:480px;aspect-ratio:1/1;}
+#globe-canvas{width:100%;height:100%;display:block;cursor:grab;}
+#globe-canvas:active{cursor:grabbing;}
+.globe-labels{position:absolute;inset:0;pointer-events:none;}
+.globe-pin-label{
+  position:absolute;transform:translate(-50%,-140%);padding:5px 11px;border-radius:20px;
+  background:rgba(5,8,16,0.85);border:1px solid rgba(0,217,255,0.35);color:var(--white);
+  font-size:11px;letter-spacing:.4px;white-space:nowrap;font-weight:600;
+  transition:opacity .25s;pointer-events:none;backdrop-filter:blur(4px);
+}
+.globe-pin-label.hq{border-color:rgba(255,207,92,0.5);color:#ffcf5c;}
+.globe-hint{
+  position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:10.5px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--muted);pointer-events:none;opacity:.7;
+}
+
+/* contact */
+#contact{border-top:1px solid var(--line);}
+.contact-wrap{display:grid;grid-template-columns:1fr 1.1fr;gap:70px;}
+@media(max-width:900px){.contact-wrap{grid-template-columns:1fr;gap:40px;}}
+.contact-people{display:grid;gap:18px;margin-top:30px;}
+.person-card{
+  border:1px solid var(--line);border-radius:16px;padding:24px;display:flex;gap:18px;align-items:center;
+  background:rgba(255,255,255,0.02);transition:border-color .3s, transform .3s;
+}
+.person-card:hover{border-color:rgba(0,217,255,0.35);transform:translateX(6px);}
+.person-avatar{
+  width:56px;height:56px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:18px;color:#001018;
+}
+.person-card h5{font-size:16px;font-weight:600;}
+.person-card .role{color:var(--cyan);font-size:12px;letter-spacing:.5px;margin:2px 0 8px;}
+.person-card .cline{color:var(--muted);font-size:13px;display:flex;gap:8px;align-items:center;}
+.info-line{display:flex;gap:14px;align-items:flex-start;margin-top:18px;color:var(--silver);font-size:14.5px;}
+.info-line .ic{width:34px;height:34px;border-radius:9px;background:rgba(0,217,255,0.08);border:1px solid rgba(0,217,255,0.25);display:flex;align-items:center;justify-content:center;color:var(--cyan);flex-shrink:0;}
+.info-line .ic svg{width:16px;height:16px;}
+.social-row{display:flex;gap:12px;margin-top:26px;}
+.social-row a{
+  width:38px;height:38px;border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:13px;transition:.3s;color:var(--silver);
+}
+.social-row a:hover{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 16px rgba(0,217,255,0.2);}
+
+.form-card{border:1px solid var(--line);border-radius:20px;padding:40px;background:linear-gradient(160deg,var(--panel),var(--bg2));}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:560px){.form-grid{grid-template-columns:1fr;}}
+.field{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.field label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
+.field input,.field textarea{
+  background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:10px;padding:13px 14px;
+  color:var(--white);font-family:'Inter';font-size:14px;outline:none;transition:border-color .3s;
+}
+.field input:focus,.field textarea:focus{border-color:var(--cyan);}
+.field textarea{resize:vertical;min-height:100px;}
+.form-submit{width:100%;margin-top:6px;justify-content:center;border:none;cursor:pointer;font-family:'Inter';}
+.form-note{color:var(--muted);font-size:12px;margin-top:14px;text-align:center;}
+
+/* footer */
+footer{border-top:1px solid var(--line);padding:50px 5% 26px;}
+.footer-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:30px;margin-bottom:36px;}
+.footer-bottom{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;color:var(--muted);font-size:12.5px;padding-top:24px;border-top:1px solid var(--line);}
+.footer-cols{display:flex;gap:60px;flex-wrap:wrap;}
+.footer-col h5{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.footer-col a{display:block;color:var(--silver);font-size:13.5px;margin-bottom:10px;transition:color .2s;}
+.footer-col a:hover{color:var(--cyan);}
+
+@media(max-width:640px){
+  section{padding:80px 5%;}
+  .products-grid,.stats-grid{gap:14px;}
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-dot"></div>
+
+<div id="loader">
+  <div class="loader-ring"></div>
+  <div class="loader-text">BIOMED — LOADING</div>
+</div>
+
+<nav id="navbar">
+  <div class="brand">BIO<span>MED</span> <span class="badge">Est. 1989</span></div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about">About</a></li>
+    <li><a href="#products">Implants</a></li>
+    <li><a href="#instruments">Instruments</a></li>
+    <li><a href="#why">Why Us</a></li>
+    <li><a href="#testimonials">Clients</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Get In Touch</a>
+  <div class="burger" id="burger"><span></span><span></span><span></span></div>
+</nav>
+
+<section id="hero" class="hud-frame">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-annotations" id="heroAnnotations"></div>
+  <span class="hud-tag">Live 3D · SCAN-01</span>
+  <div class="hero-inner">
+    <div class="eyebrow">Orthopaedic Implants &amp; Surgical Instruments · Since 1989</div>
+    <h1>Engineering Precision <span class="grad">Beneath the Surface.</span></h1>
+    <p>BIOMED manufactures stainless steel and titanium orthopaedic implants and surgical instruments — pre-sterilized with gamma irradiation, trusted by surgeons and distributed across the globe.</p>
+    <div class="hero-btns">
+      <a href="#products" class="btn btn-primary">Explore Implants →</a>
+      <a href="#contact" class="btn btn-ghost">Talk to Us</a>
+    </div>
+  </div>
+  <div class="hero-tags">
+    <div class="hero-tag">Stainless Steel &amp; Titanium</div>
+    <div class="hero-tag">Gamma-Sterilized</div>
+    <div class="hero-tag">Global Export</div>
+  </div>
+  <div class="scroll-hint"><div class="scroll-line"></div>Scroll</div>
+</section>
+
+<div class="cert-ticker">
+  <div class="cert-track">
+    <span>Surgical Grade Stainless Steel · SS 316L</span>
+    <span>Titanium Alloy · Ti-6Al-4V</span>
+    <span>Gamma Irradiation Sterilized</span>
+    <span>Precision CNC Manufactured</span>
+    <span>Established 1989 · Mumbai, India</span>
+    <span>Exported to 40+ Countries</span>
+    <span>Surgical Grade Stainless Steel · SS 316L</span>
+    <span>Titanium Alloy · Ti-6Al-4V</span>
+    <span>Gamma Irradiation Sterilized</span>
+    <span>Precision CNC Manufactured</span>
+    <span>Established 1989 · Mumbai, India</span>
+    <span>Exported to 40+ Countries</span>
+  </div>
+</div>
+
+<section id="stats" class="reveal">
+  <div class="stats-grid">
+    <div><div class="stat-num" data-target="37"><span>0</span></div><div class="stat-label">Years of Excellence</div></div>
+    <div><div class="stat-num" data-target="40"><span>0</span>+</div><div class="stat-label">Countries Served</div></div>
+    <div><div class="stat-num" data-target="90"><span>0</span>+</div><div class="stat-label">Implant Products</div></div>
+    <div><div class="stat-num" data-target="8"><span>0</span></div><div class="stat-label">Implant Categories</div></div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="about-visual reveal hud-frame"><canvas id="about-canvas"></canvas><span class="hud-tag">Implant · 3D</span></div>
+  <div class="about-text reveal">
+    <span class="section-tag">Who We Are</span>
+    <h2 style="font-size:clamp(28px,3.5vw,42px);font-weight:700;margin-bottom:20px;">Built on a medical foundation since 1989.</h2>
+    <p>BIOMED launched in 1989, set up with a strong medical background as the concrete base of the company. Over the years, the company grew rapidly and gained enormous experience — the ability to provide the right kind of service for the ever-increasing needs of professionals in the medical field. Our state-of-the-art technology, along with the latest infrastructure, facilitates a business of dependable, quality instruments for surgeons in their fields of surgery.</p>
+    <p>BIOMED has a fantastic marketing system — the team is ever ready to assist customers at every stage and to provide after-sales service. We aspire to offer quick, personalized service and innovative solutions to our customer base, and have built our reputation as a complete, comprehensive one-stop solution for the medical fraternity.</p>
+    <ul class="about-list">
+      <li>Stainless steel &amp; titanium orthopaedic implants</li>
+      <li>Pre-sterilized with gamma irradiation on request</li>
+      <li>Comprehensive surgical instrument sets</li>
+      <li>Manufactured in India, exported worldwide</li>
+    </ul>
+  </div>
+
+  <div class="vm-grid" style="grid-column:1/-1;">
+    <div class="vm-card reveal">
+      <h4>Our Vision</h4>
+      <ul>
+        <li>A Vision of Success</li>
+        <li>A Vision of Leadership in the Field</li>
+        <li>A Vision of "Team is Strength and Strength is Success"</li>
+        <li>A Vision of Professionalism in Every Aspect</li>
+        <li>A Vision of Turning Your Dreams into Reality</li>
+      </ul>
+    </div>
+    <div class="vm-card reveal">
+      <h4>Our Mission</h4>
+      <ul>
+        <li>To offer Quality Products</li>
+        <li>To be Innovative</li>
+        <li>To be Customer Oriented</li>
+        <li>To be Competitive</li>
+        <li>To seize the Future</li>
+      </ul>
+    </div>
+    <div class="vm-card reveal">
+      <h4>Our Core Values</h4>
+      <ul>
+        <li>Honesty</li>
+        <li>Discipline</li>
+        <li>Teamwork</li>
+        <li>Commitment to our Principle</li>
+        <li>Ease of Communication and Accessibility</li>
+        <li>Good after Sales Service</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="partner-block reveal" style="grid-column:1/-1;">
+    <h4>Our Support to Indian &amp; International Partners</h4>
+    <p>At BIOMED, we value human relationships the most — our team strives to offer and establish the best working partnerships. India is a vast country of over a billion people with vast cultural diversity, an environment that has to be taken into account when deciding on business in India.</p>
+    <p>Our principal objective is to forecast changes in the business environment. We assist our partners in establishing a strong foothold in the Indian market by utilizing the platform we've developed over decades. Even as we strive to expand our reach and network, our goal remains to meet the requirements of our clients to the best of our capabilities.</p>
+  </div>
+</section>
+
+<section id="products">
+  <div class="section-head reveal">
+    <span class="section-tag">Product Range</span>
+    <h2>A complete implant portfolio, engineered for every fracture pattern.</h2>
+    <p>90+ implant products across 8 categories, manufactured in surgical-grade stainless steel (SS 316L) and titanium. Browse by category, search by name, and open any product for full code &amp; size specifications.</p>
+  </div>
+
+  <div class="product-search reveal">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+    <input type="text" id="productSearch" placeholder="Search implants by name…">
+  </div>
+
+  <div class="cat-tabs reveal" id="catTabs"></div>
+  <div class="results-count" id="resultsCount"></div>
+  <div class="products-grid" id="productsGrid">
+    <!-- cards injected by JS -->
+  </div>
+</section>
+
+<section id="instruments">
+  <div class="section-head reveal">
+    <span class="section-tag">Instrumentation</span>
+    <h2>Instrument sets engineered to match every implant system.</h2>
+    <p class="instr-intro">From specialised German broken-screw removal sets to full instrument trays and general-purpose ortho hand instruments — download the actual BIOMED catalogs below.</p>
+  </div>
+  <div class="instr-doc-grid">
+    <div class="doc-card reveal">
+      <div class="doc-thumb"><img src="https://biomedorthopedics.com/wp-content/uploads/2021/12/German-Specialised-Orthopedic-Instruments-238x300.jpg" alt="Broken Screw Removal Set (German)" loading="lazy"></div>
+      <div class="doc-body">
+        <h4>Broken Screw Removal Set (German)</h4>
+        <a href="https://biomedorthopedics.com/wp-content/uploads/2023/12/Broken-Screw-Removal-Set-German.pdf" target="_blank" rel="noopener">View Set →</a>
+      </div>
+    </div>
+    <div class="doc-card reveal">
+      <div class="doc-thumb"><img src="https://biomedorthopedics.com/wp-content/uploads/2024/01/instrumentsets-1-279x300.png" alt="BIOMED Instrument Sets Catalog" loading="lazy"></div>
+      <div class="doc-body">
+        <h4>BIOMED Instrument Sets Catalog</h4>
+        <a href="https://biomedorthopedics.com/wp-content/uploads/2024/01/BIOMED-Instrument-Sets-Catalog-2-1.pdf" target="_blank" rel="noopener">Download Brochure →</a>
+      </div>
+    </div>
+    <div class="doc-card reveal">
+      <div class="doc-thumb"><img src="https://biomedorthopedics.com/wp-content/uploads/2021/12/instruments-268x300.jpg" alt="General Ortho Instruments" loading="lazy"></div>
+      <div class="doc-body">
+        <h4>General Ortho Instruments Catalog</h4>
+        <a href="https://biomedorthopedics.com/wp-content/uploads/2024/01/BIOMED-ORTHOPEDIC-INSTRUMENTS-2.pdf" target="_blank" rel="noopener">Download Brochure →</a>
+      </div>
+    </div>
+  </div>
+  <p class="instr-note reveal">For any other instrument requirements, kindly send your enquiry to <a href="mailto:info@biomedorthopedics.com">info@biomedorthopedics.com</a></p>
+</section>
+
+<section id="why">
+  <div class="section-head reveal">
+    <span class="section-tag">Why BIOMED</span>
+    <h2>Quality control at every stage, from raw material to sterile pack.</h2>
+  </div>
+  <div class="feature-grid">
+    <div class="feature reveal">
+      <div class="num">01</div>
+      <h4>Premium Materials</h4>
+      <p>Implants manufactured in surgical-grade stainless steel and titanium for strength, biocompatibility and long-term reliability.</p>
+    </div>
+    <div class="feature reveal">
+      <div class="num">02</div>
+      <h4>Gamma Sterilization</h4>
+      <p>Products can be supplied pre-sterilized with gamma irradiation, ready for the operating room on arrival.</p>
+    </div>
+    <div class="feature reveal">
+      <div class="num">03</div>
+      <h4>Global Reach</h4>
+      <p>From our Mumbai base, BIOMED implants and instruments reach distributors and hospitals across international markets.</p>
+    </div>
+    <div class="feature reveal">
+      <div class="num">04</div>
+      <h4>35+ Years of Trust</h4>
+      <p>A medical background at our core since 1989 — decades of manufacturing experience behind every product that leaves our facility.</p>
+    </div>
+    <div class="feature reveal">
+      <div class="num">05</div>
+      <h4>Full Product Range</h4>
+      <p>From locking and trauma implants to spine, hip and maxillofacial systems — plus the full instrument sets to match.</p>
+    </div>
+    <div class="feature reveal">
+      <div class="num">06</div>
+      <h4>Dealer Network</h4>
+      <p>An active dealer welcome program supporting distributors who want to bring BIOMED quality to their region.</p>
+    </div>
+  </div>
+</section>
+
+<section id="testimonials">
+  <div class="section-head reveal">
+    <span class="section-tag">Client Voices</span>
+    <h2>Trusted by importers and distributors worldwide.</h2>
+  </div>
+  <div class="test-track reveal">
+    <div class="test-card">
+      <span class="quote">"</span>
+      <p>As a regular importer of Biomed products for a long time, I am fully satisfied with the quality and after-sale service provided by them, and hope to continue with it in the future.</p>
+      <div class="test-who"><div class="avatar">SA</div><div><h5>Swapnil Ambetkar</h5><span>Importer</span></div></div>
+    </div>
+    <div class="test-card">
+      <span class="quote">"</span>
+      <p>Came to know about Biomed Orthopedics during a medical exhibition in Dubai. They have an ample range of ortho implants available, and their products are of top quality with all important certifications.</p>
+      <div class="test-who"><div class="avatar">MK</div><div><h5>Muskan Khan</h5><span>Distributor, Dubai</span></div></div>
+    </div>
+    <div class="test-card">
+      <span class="quote">"</span>
+      <p>A dependable manufacturing partner — consistent quality across every batch, and responsive whenever we need documentation or support for our regional buyers.</p>
+      <div class="test-who"><div class="avatar">DP</div><div><h5>Dealer Partner</h5><span>Regional Distributor</span></div></div>
+    </div>
+  </div>
+
+  <div class="globe-section">
+    <div class="globe-copy reveal">
+      <span class="section-tag">Global Footprint</span>
+      <h3>Our clients span continents.</h3>
+      <p>From our Mumbai headquarters, BIOMED implants and instruments reach distributors and hospitals across South Asia, Central Asia, the Middle East and Africa, and Eastern Europe. Drag the globe or pick a country below.</p>
+      <div class="country-list" id="countryList"><!-- injected by JS --></div>
+    </div>
+    <div class="globe-visual reveal">
+      <div class="globe-canvas-wrap hud-frame" id="globeCanvasWrap">
+        <canvas id="globe-canvas"></canvas>
+        <div class="globe-labels" id="globeLabels"></div>
+        <div class="globe-hint">Drag to rotate</div>
+        <span class="hud-tag">Network · Live</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="contact-wrap">
+    <div class="reveal">
+      <span class="section-tag">Get In Touch</span>
+      <h2 style="font-size:clamp(28px,3.5vw,42px);font-weight:700;">Let's talk implants, instruments &amp; distribution.</h2>
+      <div class="info-line">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <div>207, 2nd Floor, Dr. A. B. Road, Worli Naka,<br>Mumbai – 400 018, India</div>
+      </div>
+      <div class="info-line">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+        <div>+91 97400 69305 &nbsp;/&nbsp; +91 93205 67333</div>
+      </div>
+      <div class="info-line">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z" opacity="0"/><path d="M22 6l-10 7L2 6"/><path d="M2 6h20v12H2z"/></svg></div>
+        <div>info@biomedorthopedics.com</div>
+      </div>
+
+      <div class="contact-people">
+        <div class="person-card">
+          <div class="person-avatar">PM</div>
+          <div>
+            <h5>Prabhat Mishra</h5>
+            <div class="role">Business Development</div>
+            <div class="cline">+91 97400 69305 &nbsp;·&nbsp; info@biomedorthopedics.com</div>
+          </div>
+        </div>
+        <div class="person-card">
+          <div class="person-avatar">MD</div>
+          <div>
+            <h5>Dr. Mukesh Daftry</h5>
+            <div class="role">Medical Advisor &amp; Director</div>
+            <div class="cline">+91 93205 67333 &nbsp;·&nbsp; info@biomedorthopedics.com</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="social-row">
+        <a href="https://www.facebook.com/biomedorthopedics1/" target="_blank" rel="noopener">f</a>
+        <a href="https://www.instagram.com/biomedorthopedicsmumbai/" target="_blank" rel="noopener">ig</a>
+        <a href="https://in.linkedin.com/company/biomed-orthopedic" target="_blank" rel="noopener">in</a>
+        <a href="https://twitter.com/BiomedOrtho01" target="_blank" rel="noopener">tw</a>
+        <a href="https://in.pinterest.com/biomed_orthopedics/" target="_blank" rel="noopener">p</a>
+      </div>
+    </div>
+
+    <div class="form-card reveal">
+      <h3 style="font-size:22px;margin-bottom:6px;">Send an Enquiry</h3>
+      <p style="color:var(--muted);font-size:13.5px;margin-bottom:26px;">Product enquiry, dealership request or catalog download — we'll get back to you.</p>
+      <form id="enquiryForm" onsubmit="return handleSubmit(event)">
+        <div class="form-grid">
+          <div class="field"><label>First Name</label><input type="text" required></div>
+          <div class="field"><label>Last Name</label><input type="text" required></div>
+        </div>
+        <div class="field"><label>Email</label><input type="email" required></div>
+        <div class="field"><label>Phone Number</label><input type="tel" required></div>
+        <div class="field"><label>Message</label><textarea required placeholder="Tell us what you're looking for..."></textarea></div>
+        <button type="submit" class="btn btn-primary form-submit">Submit Enquiry</button>
+        <p class="form-note">This is a demo form — connect it to your email or CRM to go live.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="brand" style="margin-bottom:14px;">BIO<span>MED</span></div>
+      <p style="color:var(--muted);font-size:13.5px;max-width:320px;line-height:1.7;">Manufacturers of orthopaedic implants &amp; surgical instruments since 1989. Mumbai, India — serving clients worldwide.</p>
+    </div>
+    <div class="footer-cols">
+      <div class="footer-col">
+        <h5>Products</h5>
+        <a href="#products">Locking Implants</a>
+        <a href="#products">Trauma Implants</a>
+        <a href="#products">Hip Prosthesis</a>
+        <a href="#products">Spine Implants</a>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <a href="#about">About Us</a>
+        <a href="#instruments">Instruments</a>
+        <a href="#testimonials">Clients</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 BIOMED Orthopedics. All rights reserved.</span>
+    <span>Mumbai · Bangalore · USA · UK · UAE</span>
+  </div>
+</footer>
+
+<div id="productModal">
+  <div class="modal-box">
+    <div class="modal-close" id="modalClose">✕</div>
+    <div class="modal-img hud-frame"><img id="modalImg" src="" alt=""><span class="hud-tag">Spec View</span></div>
+    <div class="modal-info">
+      <span class="cat-badge" id="modalCat"></span>
+      <h3 id="modalTitle"></h3>
+      <div class="material" id="modalMaterial" style="display:none;"></div>
+      <div id="modalTableWrap" class="modal-table-wrap" style="display:none;">
+        <table class="modal-table" id="modalTable"></table>
+      </div>
+      <div id="modalTypesWrap" style="display:none;">
+        <div class="modal-types" id="modalTypes"></div>
+      </div>
+      <div class="modal-cta">
+        <a href="#contact" class="btn btn-primary" id="modalEnquire">Enquire About This Product</a>
+      </div>
+      <div class="modal-source">Source listing: <a id="modalSourceLink" href="#" target="_blank" rel="noopener">biomedorthopedics.com ↗</a></div>
+    </div>
+  </div>
+</div>
+
+<script id="product-data" type="application/json">{"locking-implants":[{"name":"Small Compression Locking Plate 3.5 mm","url":"https://biomedorthopedics.com/product/small-compression-locking-plate-3-5-mm/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/07/T6A0131-31-small-LCP-plate.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BO.155.04","size":"4 Holes"},{"code":"BO.155.05","size":"5 Holes"},{"code":"BO.155.06","size":"6 Holes"},{"code":"BO.155.07","size":"7 Holes"},{"code":"BO.155.08","size":"8 Holes"},{"code":"BO.155.09","size":"9 Holes"},{"code":"BO.155.10","size":"10 Holes"},{"code":"BO.155.11","size":"11 Holes"},{"code":"BO.155.12","size":"12 Holes"}]},{"name":"Small T Plate Locking Right Angle 3.5 mm","url":"https://biomedorthopedics.com/product/small-t-plates-for-3-5-mm-screws/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/SMALL-T-PLATE-OBLIQUE-LOCKING-3.5-mm-LEFT-1.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BO.150.03","size":"3 Holes"},{"code":"BO.150.04","size":"4 Holes"},{"code":"BO.150.05","size":"5 Holes"},{"code":"BO.150.06","size":"6 Holes"},{"code":"BO.150.07","size":"7 Holes"},{"code":"BO.150.08","size":"8 Holes"},{"code":"BO.150.09","size":"9 Holes"},{"code":"BO.150.10","size":"10 Holes"}]},{"name":"Reconstruction Locking Plate 3.5 mm Round Hole","url":"https://biomedorthopedics.com/product/reconconstruction-plate/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/RECONSTRUCTION-LOCKING-PLATE-3.5-mm-1.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BO.153.04","size":"4 Holes"},{"code":"BO.153.05","size":"5 Holes"},{"code":"BO.153.06","size":"6 Holes"},{"code":"BO.153.07","size":"7 Holes"},{"code":"BO.153.08","size":"8 Holes"},{"code":"BO.153.09","size":"9 Holes"},{"code":"BO.153.10","size":"10 Holes"},{"code":"BO.153.11","size":"11 Holes"},{"code":"BO.153.12","size":"12 Holes"},{"code":"BO.153.13","size":"13 Holes"},{"code":"BO.153.14","size":"14 Holes"}]},{"name":"Clavicle plate locking 3.5 mm","url":"https://biomedorthopedics.com/product/clavicle-plate/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/CLAVICLE-PLATE-LOCKING-3.5-mm-LEFT.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BO.9928.04","size":"4 Holes"},{"code":"BO.9928.05","size":"5 Holes"},{"code":"BO.9928.06","size":"6 Holes"},{"code":"BO.9928.07","size":"7 Holes"},{"code":"B.034B.08","size":"8 Holes"},{"code":"BO.9928.09","size":"9 Holes"},{"code":"BO.9928.10","size":"10 Holes"}]},{"name":"Proximal tibia Locking Plate 3.5 mm","url":"https://biomedorthopedics.com/product/proximal-tibia-locking-plate-3-5-mm/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/07/T6A0123-564.5mm-L-buttress-plate.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BO.9986.04","size":"4 Holes"},{"code":"BO.9986.06","size":"6 Holes"},{"code":"BO.9986.08","size":"8 Holes"},{"code":"BO.164.09","size":"9 Holes"},{"code":"BO.9986.10","size":"10 Holes"},{"code":"BO.9986.12","size":"12 Holes"}]},{"name":"Posteromedial Proximal Tibia Locking Plate 3.5 mm","url":"https://biomedorthopedics.com/product/posteromedial-proximal-tibia-locking-plate-3-5-mm/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/07/Tiba-3_5LCPPosteromedProxTibPl-14-0114-1.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BO.273.03","size":"3 Holes"},{"code":"BO.273.04","size":"4 Holes"},{"code":"BO.273.05","size":"5 Holes"},{"code":"BO.273.06","size":"6 Holes"},{"code":"BO.273.07","size":"7 Holes"},{"code":"BO.273.08","size":"8 Holes"},{"code":"BO.273.09","size":"9 Holes"},{"code":"BO.273.10","size":"10 Holes"}]},{"name":"Proximal Humerus Locking Plate Philos 3.5 mm Dynamic Hole ( Long Dynamic Hole)","url":"https://biomedorthopedics.com/product/proximal-humerus-plate/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/PROXIMAL-HUMERUS-LOCKING-PLATE-PHILOS-3-1.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BO.156.02","size":"2 Holes"},{"code":"BO.156.03","size":"3 Holes"},{"code":"BO.156.04","size":"4 Holes"},{"code":"BO.156.05","size":"5 Holes"},{"code":"BO.156.06","size":"6 Holes"},{"code":"BO.156.07","size":"7 Holes"},{"code":"BO.156.08","size":"8 Holes"},{"code":"BO.156.09","size":"9 Holes"},{"code":"BO.156.10","size":"10 Holes"},{"code":"BO.156.11","size":"11 Holes"},{"code":"BO.156.12","size":"12 Holes"}]},{"name":"Distal Humerus Locking plate 2.7 mm / 3.5 mm","url":"https://biomedorthopedics.com/product/distal-humerus-locking-plate-2-7-mm-3-5-mm/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/07/T6A0119-37-3.5mm-distal-humerus-wihout-support-plate.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BO.01.9925.03","size":"3 Holes"},{"code":"BO.01.9925.05","size":"5 Holes"},{"code":"BO.01.9925.07","size":"7 Holes"},{"code":"BO.01.9925.09","size":"9 Holes"},{"code":"BO.01.9925.011","size":"11 Holes"}]},{"name":"Distal Humerus With Lateral Support locking plate 2.7 mm / 3.5 mm","url":"https://biomedorthopedics.com/product/distal-humerus-with-lateral-support-locking-plate-2-7-mm-3-5-mm/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/07/T6A0136-60-distal-humerus-with-s-plate.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BO.01.9907.03","size":"3 Holes"},{"code":"BO.01.9907.05","size":"5 Holes"},{"code":"BO.01.9907.07","size":"7 Holes"},{"code":"BO.01.9907.09","size":"9 Holes"},{"code":"BO.01.9907.011","size":"11 Holes"}]},{"name":"Extra-Articular Distal Humerus Locking Plate 2.7 mm / 3.5 mm","url":"https://biomedorthopedics.com/product/extra-articular-distal-humerus-locking-plate-2-7-mm-3-5-mm/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/07/40-Articulated-Distal-Humerous-Plate-Right.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BO.9941.04","size":"4 Holes"},{"code":"BO.9941.06","size":"6 Holes"},{"code":"BO.9941.08","size":"8 Holes"},{"code":"BO.9941.10","size":"10 Holes"},{"code":"BO.9941.12","size":"12 Holes"},{"code":"BO.9941.14","size":"14 Holes"}]},{"name":"Medial Proximal Tibia Locking Plate 3.5 mm","url":"https://biomedorthopedics.com/product/medial-proximal-tibia-locking-plate-3-5-mm/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/07/41-Biofixation-Medial-Proximal-Tibial-Plate-Left.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BO.268.04","size":"4 Holes"},{"code":"BO.268.06","size":"6 Holes"},{"code":"BO.268.08","size":"8 Holes"},{"code":"BO.268.10","size":"10 Holes"},{"code":"BO.268.12","size":"12 Holes"}]},{"name":"Medial Distal Tibia Locking Plate 3.5 mm","url":"https://biomedorthopedics.com/product/distal-tibia-plate/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/42-Biofixation-Medial-Distal-Tibia-Plate-1.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"B.031B.03","size":"3 Holes"},{"code":"B.031B.04","size":"4 Holes"},{"code":"B.031B.05","size":"5 Holes"},{"code":"B.031B.06","size":"6 Holes"},{"code":"B.031B.07","size":"7 Holes"},{"code":"B.031B.08","size":"8 Holes"},{"code":"B.031B.09","size":"9 Holes"},{"code":"B.031B.10","size":"10 Holes"},{"code":"B.031B.11","size":"11 Holes"},{"code":"B.031B.12","size":"12 Holes"},{"code":"B.031B.13","size":"13 Holes"},{"code":"B.031B.14","size":"14 Holes"}]},{"name":"L Buttress Locking Plate 5 mm","url":"https://biomedorthopedics.com/product/l-buttress-plate/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/L-buttress-plate-2.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BO.148.04","size":"4 Holes"},{"code":"BO.148.05","size":"5 Holes"},{"code":"BO.148.06","size":"6 Holes"},{"code":"BO.148.07","size":"7 Holes"},{"code":"BO.148.08","size":"8 Holes"},{"code":"BO.148.09","size":"9 Holes"},{"code":"BO.148.10","size":"10 Holes"},{"code":"BO.148.11","size":"11 Holes"},{"code":"BO.148.12","size":"12 Holes"}]},{"name":"T Buttress Locking Plate 5 mm","url":"https://biomedorthopedics.com/product/t-buttress-plate/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/T-BUTTRESS-PLATE-3.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BO.262.04","size":"4 Holes"},{"code":"BO.262.05","size":"5 Holes"},{"code":"BO.262.06","size":"6 Holes"},{"code":"BO.262.07","size":"7 Holes"},{"code":"BO.262.08","size":"8 Holes"},{"code":"BO.262.09","size":"9 Holes"},{"code":"BO.262.10","size":"10 Holes"},{"code":"BO.262.11","size":"11 Holes"},{"code":"BO.262.12","size":"12 Holes"}]},{"name":"Lateral Tibial Locking Plate 5 mm","url":"https://biomedorthopedics.com/product/lateral-tibial-locking-plate-5-mm/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/07/45-Biofixation-Lateral-Tibia-Plate-Right.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BO.159.03","size":"3 Holes"},{"code":"BO.159.05","size":"5 Holes"},{"code":"BO.159.07","size":"7 Holes"},{"code":"BO.159.09","size":"9 Holes"},{"code":"BO.159.11","size":"11 Holes"},{"code":"BO.159.13","size":"13 Holes"}]},{"name":"Distal Femur Locking plate 5 mm","url":"https://biomedorthopedics.com/product/distal-femur-plate/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/DISTAL-FEMUR-LOCKING-PLATE-5-mm-RIGHT-1.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BO.164.03","size":"3 Holes"},{"code":"BO.164.05","size":"5 Holes"},{"code":"BO.164.07","size":"7 Holes"},{"code":"BO.164.09","size":"9 Holes"},{"code":"BO.164.11","size":"11 Holes"},{"code":"BO.164.13","size":"13 Holes"}]},{"name":"Locking Screw Ø 3.5 mm","url":"https://biomedorthopedics.com/product/locking-screws-3-5-mm/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/3.5-MM-LOCKING-SCREW.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BO.168.12","size":"12"},{"code":"BO.168.14","size":"14"},{"code":"BO.168.16","size":"16"},{"code":"BO.168.18","size":"18"},{"code":"BO.168.20","size":"20"},{"code":"BO.168.22","size":"22"},{"code":"BO.168.24","size":"24"},{"code":"BO.168.26","size":"26"},{"code":"BO.168.28","size":"28"},{"code":"BO.168.30","size":"30"},{"code":"BO.168.32","size":"32"},{"code":"BO.168.34","size":"34"},{"code":"BO.168.36","size":"36"},{"code":"BO.168.38","size":"38"},{"code":"BO.168.40","size":"40"},{"code":"BO.168.45","size":"45"},{"code":"BO.168.50","size":"50"},{"code":"BO.168.55","size":"55"},{"code":"BO.168.60","size":"60"},{"code":"BO.168.65","size":"65"},{"code":"BO.168.70","size":"70"},{"code":"BO.168.75","size":"75"},{"code":"BO.168.80","size":"80"},{"code":"BO.168.85","size":"85"}]},{"name":"Locking Screw Ø 4 mm ( Cancellous Thread)","url":"https://biomedorthopedics.com/product/locking-screw-o-4-mm-cancellous-thread/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/07/T6A0155.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BO.170.20","size":"20"},{"code":"BO.170.25","size":"25"},{"code":"BO.170.30","size":"30"},{"code":"BO.170.35","size":"35"},{"code":"BO.170.40","size":"40"},{"code":"BO.170.45","size":"45"},{"code":"BO.170.50","size":"50"},{"code":"BO.170.55","size":"55"},{"code":"BO.170.60","size":"60"},{"code":"BO.170.65","size":"65"},{"code":"BO.170.70","size":"70"},{"code":"BO.170.75","size":"75"},{"code":"BO.170.80","size":"80"},{"code":"BO.170.85","size":"85"}]},{"name":"Locking Screw Ø 5 mm","url":"https://biomedorthopedics.com/product/locking-screw-o-5-mm/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/07/79-5mm-biofixation-screw-tit.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BO.169.14","size":"14"},{"code":"BO.169.16","size":"16"},{"code":"BO.169.18","size":"18"},{"code":"BO.169.20","size":"20"},{"code":"BO.169.22","size":"22"},{"code":"BO.169.24","size":"24"},{"code":"BO.169.26","size":"26"},{"code":"BO.169.28","size":"28"},{"code":"BO.169.30","size":"30"},{"code":"BO.169.32","size":"32"},{"code":"BO.169.34","size":"34"},{"code":"BO.169.36","size":"36"},{"code":"BO.169.38","size":"38"},{"code":"BO.169.40","size":"40"},{"code":"BO.169.44","size":"44"},{"code":"BO.169.46","size":"46"},{"code":"BO.169.48","size":"48"},{"code":"BO.169.50","size":"50"},{"code":"BO.169.52","size":"52"},{"code":"BO.169.54","size":"54"},{"code":"BO.169.56","size":"56"},{"code":"BO.169.58","size":"58"},{"code":"BO.169.60","size":"58"},{"code":"BO.169.65","size":"65"},{"code":"BO.169.70","size":"70"},{"code":"BO.169.75","size":"75"},{"code":"BO.169.80","size":"80"},{"code":"BO.169.85","size":"85"},{"code":"BO.169.90","size":"90"},{"code":"BO.169.95","size":"95"}]}],"interlocking-implants":[{"name":"Interlocking Femur Nail","url":"https://biomedorthopedics.com/product/femur-nail/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/T6A0025.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BOI.03.151.09.36","size":"36","notes":"Ø 9.0 mm"},{"code":"BOI.03.151.09.38","size":"38","notes":"Ø 9.0 mm"},{"code":"BOI.03.151.09.40","size":"40","notes":"Ø 9.0 mm"},{"code":"BOI.03.151.09.42","size":"42","notes":"Ø 9.0 mm"},{"code":"BOI.03.151.09.44","size":"44","notes":"Ø 9.0 mm"},{"code":"BOI.03.151.09.46","size":"46","notes":"Ø 9.0 mm"},{"code":"BOI.03.151.10.36","size":"36","notes":"Ø 10.0 mm"},{"code":"BOI.03.151.10.38","size":"38","notes":"Ø 10.0 mm"},{"code":"BOI.03.151.10.40","size":"40","notes":"Ø 10.0 mm"},{"code":"BOI.03.151.10.42","size":"42","notes":"Ø 10.0 mm"},{"code":"BOI.03.151.10.44","size":"44","notes":"Ø 10.0 mm"},{"code":"BOI.03.151.10.46","size":"46","notes":"Ø 10.0 mm"},{"code":"BOI.03.151.11.36","size":"36","notes":"Ø 11.0 mm"},{"code":"BOI.03.151.11.38","size":"38","notes":"Ø 11.0 mm"},{"code":"BOI.03.151.11.40","size":"40","notes":"Ø 11.0 mm"},{"code":"BOI.03.151.11.42","size":"42","notes":"Ø 11.0 mm"},{"code":"BOI.03.151.11.44","size":"44","notes":"Ø 11.0 mm"},{"code":"BOI.03.151.11.46","size":"46","notes":"Ø 11.0 mm"},{"code":"BOI.03.151.12.36","size":"36","notes":"Ø 12.0 mm"},{"code":"BOI.03.151.12.38","size":"38","notes":"Ø 12.0 mm"},{"code":"BOI.03.151.12.40","size":"40","notes":"Ø 12.0 mm"},{"code":"BOI.03.151.12.42","size":"42","notes":"Ø 12.0 mm"},{"code":"BOI.03.151.12.44","size":"44","notes":"Ø 12.0 mm"},{"code":"BOI.03.151.12.46","size":"46","notes":"Ø 12.0 mm"}]},{"name":"Interlocking Tibia Nail","url":"https://biomedorthopedics.com/product/tibia-nails/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/T6A0021.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BOI.03.150.08.28","size":"28","notes":"Ø 8.0 mm"},{"code":"BOI.03.150.08.30","size":"30","notes":"Ø 8.0 mm"},{"code":"BOI.03.150.08.32","size":"32","notes":"Ø 8.0 mm"},{"code":"BOI.03.150.08.34","size":"34","notes":"Ø 8.0 mm"},{"code":"BOI.03.150.08.36","size":"36","notes":"Ø 8.0 mm"},{"code":"BOI.03.150.08.38","size":"38","notes":"Ø 8.0 mm"},{"code":"BOI.03.150.08.40","size":"40","notes":"Ø 8.0 mm"},{"code":"BOI.03.150.09.28","size":"28","notes":"Ø 9.0 mm"},{"code":"BOI.03.150.09.30","size":"30","notes":"Ø 9.0 mm"},{"code":"BOI.03.150.09.32","size":"32","notes":"Ø 9.0 mm"},{"code":"BOI.03.150.09.34","size":"34","notes":"Ø 9.0 mm"},{"code":"BOI.03.150.09.36","size":"36","notes":"Ø 9.0 mm"},{"code":"BOI.03.150.09.38","size":"38","notes":"Ø 9.0 mm"},{"code":"BOI.03.150.09.40","size":"40","notes":"Ø 9.0 mm"},{"code":"BOI.03.150.10.28","size":"28","notes":"Ø 10.0 mm"},{"code":"BOI.03.150.10.30","size":"30","notes":"Ø 10.0 mm"},{"code":"BOI.03.150.10.32","size":"32","notes":"Ø 10.0 mm"},{"code":"BOI.03.150.10.34","size":"34","notes":"Ø 10.0 mm"},{"code":"BOI.03.150.10.36","size":"36","notes":"Ø 10.0 mm"},{"code":"BOI.03.150.10.38","size":"38","notes":"Ø 10.0 mm"},{"code":"BOI.03.150.10.40","size":"40","notes":"Ø 10.0 mm"},{"code":"BOI.03.150.11.28","size":"28","notes":"Ø 11.0 mm"},{"code":"BOI.03.150.11.30","size":"30","notes":"Ø 11.0 mm"},{"code":"BOI.03.150.11.32","size":"32","notes":"Ø 11.0 mm"},{"code":"BOI.03.150.11.34","size":"34","notes":"Ø 11.0 mm"},{"code":"BOI.03.150.11.36","size":"36","notes":"Ø 11.0 mm"},{"code":"BOI.03.150.11.38","size":"38","notes":"Ø 11.0 mm"},{"code":"BOI.03.150.11.40","size":"40","notes":"Ø 11.0 mm"}]},{"name":"Interlocking Trochentric Femur Nail ( TFN ) Short 135°","url":"https://biomedorthopedics.com/product/interlocking-trochentric-femur-nail-tfn-short-135/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/07/T6A0090.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BO.9935.135.09.18","size":"18","notes":"Ø 9 mm"},{"code":"BO.9935.135.10.18","size":"18","notes":"Ø 10 mm"}]},{"name":"Interlocking Proximal Femur Nail (PFN) SHORT 130°","url":"https://biomedorthopedics.com/product/proximal-femur-nails-pfn/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/T6A0035.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BOI.97.130.09.25","size":"25"},{"code":"BOI.97.130.10.25","size":"25"},{"code":"BOI.97.130.11.25","size":"25"},{"code":"BOI.97.130.12.25","size":"25"}]},{"name":"Interlocking Bolt Ø 4.5 mm","url":"https://biomedorthopedics.com/product/locking-bolt-2/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/INTERLOCKING-BOLT-O-4.5-mm.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BOI.01.152.18","size":"18"},{"code":"BOI.01.152.20","size":"20"},{"code":"BOI.01.152.22","size":"22"},{"code":"BOI.01.152.24","size":"24"},{"code":"BOI.01.152.26","size":"26"},{"code":"BOI.01.152.28","size":"28"},{"code":"BOI.01.152.30","size":"30"},{"code":"BOI.01.152.32","size":"32"},{"code":"BOI.01.152.34","size":"34"},{"code":"BOI.01.152.36","size":"36"},{"code":"BOI.01.152.38","size":"38"},{"code":"BOI.01.152.40","size":"40"},{"code":"BOI.01.152.42","size":"42"},{"code":"BOI.01.152.44","size":"44"},{"code":"BOI.01.152.46","size":"46"},{"code":"BOI.01.152.48","size":"48"},{"code":"BOI.01.152.50","size":"50"},{"code":"BOI.01.152.52","size":"52"},{"code":"BOI.01.152.54","size":"54"},{"code":"BOI.01.152.56","size":"56"},{"code":"BOI.01.152.58","size":"58"},{"code":"BOI.01.152.65","size":"65"},{"code":"BOI.01.152.70","size":"70"},{"code":"BOI.01.152.75","size":"75"},{"code":"BOI.01.152.80","size":"80"},{"code":"BOI.01.152.85","size":"85"},{"code":"BOI.01.152.90","size":"90"}]},{"name":"Interlocking Bolt Ø 4.9 mm","url":"https://biomedorthopedics.com/product/locking-bolt/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/INTERLOCKING-BOLT-O-4.5-mm.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BOI.152.18","size":"18"},{"code":"BOI.152.20","size":"20"},{"code":"BOI.152.22","size":"22"},{"code":"BOI.152.24","size":"24"},{"code":"BOI.152.26","size":"26"},{"code":"BOI.152.28","size":"28"},{"code":"BOI.152.30","size":"30"},{"code":"BOI.152.32","size":"32"},{"code":"BOI.152.34","size":"34"},{"code":"BOI.152.36","size":"36"},{"code":"BOI.152.38","size":"38"},{"code":"BOI.152.40","size":"40"},{"code":"BOI.152.42","size":"42"},{"code":"BOI.152.44","size":"44"},{"code":"BOI.152.46","size":"46"},{"code":"BOI.152.48","size":"48"},{"code":"BOI.152.50","size":"50"},{"code":"BOI.152.52","size":"52"},{"code":"BOI.152.54","size":"54"},{"code":"BOI.152.55","size":"56"},{"code":"BOI.152.60","size":"58"},{"code":"BOI.152.65","size":"60"},{"code":"BOI.152.70","size":"62"},{"code":"BOI.152.75","size":"64"},{"code":"BOI.152.80","size":"66"},{"code":"BOI.152.85","size":"68"},{"code":"BOI.152.90","size":"70"}]},{"name":"Pfn Bolt cannulated Ø 6.4 mm","url":"https://biomedorthopedics.com/product/p-f-nail-screw/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/PFN-Nail-Screw.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BOI.95.30","size":"30"},{"code":"BOI.95.35","size":"35"},{"code":"BOI.95.40","size":"40"},{"code":"BOI.95.45","size":"45"},{"code":"BOI.95.50","size":"50"},{"code":"BOI.95.55","size":"55"},{"code":"BOI.95.60","size":"60"},{"code":"BOI.95.65","size":"65"},{"code":"BOI.95.70","size":"70"},{"code":"BOI.95.75","size":"75"},{"code":"BOI.95.80","size":"80"},{"code":"BOI.95.85","size":"85"},{"code":"BOI.95.90","size":"90"},{"code":"BOI.95.95","size":"95"},{"code":"BOI.95.100","size":"100"},{"code":"BOI.95.105","size":"105"},{"code":"BOI.95.110","size":"110"},{"code":"BOI.95.115","size":"115"},{"code":"BOI.95.120","size":"120"}]},{"name":"Pfn Bolt cannulated Ø 8.0 mm","url":"https://biomedorthopedics.com/product/pfn-bolt-cannulated-o-8-0-mm/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/07/T6A0189.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BOI.96.45","size":"45"},{"code":"BOI.96.50","size":"50"},{"code":"BOI.96.55","size":"55"},{"code":"BOI.96.60","size":"60"},{"code":"BOI.96.65","size":"65"},{"code":"BOI.96.70","size":"70"},{"code":"BOI.96.75","size":"75"},{"code":"BOI.96.80","size":"80"},{"code":"BOI.96.85","size":"85"},{"code":"BOI.96.90","size":"90"},{"code":"BOI.96.95","size":"95"},{"code":"BOI.96.100","size":"100"},{"code":"BOI.96.105","size":"105"},{"code":"BOI.96.110","size":"110"},{"code":"BOI.96.115","size":"115"},{"code":"BOI.96.120","size":"120"}]}],"trauma-implants":[{"name":"Cannulated Cancellous Screw Ø 4.0 mm ( Full Thread )","url":"https://biomedorthopedics.com/product/cannulated-cancellous-screw-o-4-0-mm-full-thread/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/08/T6A0180-4-6.5mm-cannulated-cancellous-FT.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BOI.107.10","size":"10"},{"code":"BOI.107.12","size":"12"},{"code":"BOI.107.14","size":"14"},{"code":"BOI.107.16","size":"16"},{"code":"BOI.107.18","size":"18"},{"code":"BOI.107.20","size":"20"},{"code":"BOI.107.22","size":"22"},{"code":"BOI.107.24","size":"24"},{"code":"BOI.107.26","size":"26"},{"code":"BOI.107.28","size":"28"},{"code":"BOI.107.30","size":"30"},{"code":"BOI.107.35","size":"35"},{"code":"BOI.107.40","size":"40"},{"code":"BOI.107.45","size":"45"},{"code":"BOI.107.50","size":"50"},{"code":"BOI.107.55","size":"55"},{"code":"BOI.106.60","size":"60"},{"code":"BOI.106.65","size":"65"},{"code":"BOI.107.70","size":"70"},{"code":"BOI.106.75","size":"75"},{"code":"BOI.107.80","size":"80"},{"code":"BOI.106.85","size":"85"},{"code":"BOI.107.90","size":"90"}]},{"name":"Cannulated Cancellous Screw Ø 4.0 mm ( Short Thread )","url":"https://biomedorthopedics.com/product/cannulated-cancellous-screw-o-4-0-mm-short-thread/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/08/T6A0171-106.5mm-cancellous-screw32mm.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BOI.106.10","size":"10"},{"code":"BOI.106.12","size":"12"},{"code":"BOI.106.14","size":"14"},{"code":"BOI.106.16","size":"16"},{"code":"BOI.106.18","size":"18"},{"code":"BOI.106.20","size":"20"},{"code":"BOI.106.22","size":"22"},{"code":"BOI.106.24","size":"24"},{"code":"BOI.106.26","size":"26"},{"code":"BOI.106.28","size":"28"},{"code":"BOI.106.30","size":"30"},{"code":"BOI.106.35","size":"35"},{"code":"BOI.106.40","size":"40"},{"code":"BOI.106.45","size":"45"},{"code":"BOI.106.50","size":"50"},{"code":"BOI.106.55","size":"55"},{"code":"BOI.106.60","size":"60"},{"code":"BOI.106.65","size":"65"},{"code":"BOI.106.70","size":"70"},{"code":"BOI.106.75","size":"75"},{"code":"BOI.106.80","size":"80"},{"code":"BOI.106.85","size":"85"},{"code":"BOI.106.90","size":"90"}]},{"name":"Cannulated Cancellous Screw Ø 6.5 mm ( 16 mm Thread )","url":"https://biomedorthopedics.com/product/cannulated-cancellous-screw-o-6-5-mm-16-mm-thread/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/08/T6A0178-5-6.5mm-cannulated-cancellous-screw-16th.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BOI.114.25","size":"25"},{"code":"BOI.114.30","size":"30"},{"code":"BOI.114.35","size":"35"},{"code":"BOI.114.40","size":"40"},{"code":"BOI.114.45","size":"45"},{"code":"BOI.114.50","size":"50"},{"code":"BOI.114.55","size":"55"},{"code":"BOI.114.60","size":"60"},{"code":"BOI.114.65","size":"65"},{"code":"BOI.114.70","size":"70"},{"code":"BOI.114.75","size":"75"},{"code":"BOI.114.80","size":"80"},{"code":"BOI.114.85","size":"85"},{"code":"BOI.114.90","size":"90"},{"code":"BOI.114.95","size":"95"},{"code":"BOI.114.100","size":"100"},{"code":"BOI.114.105","size":"105"},{"code":"BOI.114.110","size":"110"}]},{"name":"Cannulated cancellous Screw Ø 6.5 mm ( 32 mm Thread )","url":"https://biomedorthopedics.com/product/cannulated-cancellous-screw-o-6-5-mm-32-mm-thread/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/08/T6A0176-6-6.5mm-cannulated-cancellous-screw-32th.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BOI.115.25","size":"25"},{"code":"BOI.115.30","size":"30"},{"code":"BOI.115.35","size":"35"},{"code":"BOI.115.40","size":"40"},{"code":"BOI.115.45","size":"45"},{"code":"BOI.115.50","size":"50"},{"code":"BOI.115.55","size":"55"},{"code":"BOI.115.60","size":"60"},{"code":"BOI.115.65","size":"65"},{"code":"BOI.115.70","size":"70"},{"code":"BOI.115.75","size":"75"},{"code":"BOI.115.80","size":"80"},{"code":"BOI.115.85","size":"85"},{"code":"BOI.115.90","size":"90"},{"code":"BOI.115.95","size":"95"},{"code":"BOI.115.100","size":"100"},{"code":"BOI.115.105","size":"105"},{"code":"BOI.115.110","size":"110"}]},{"name":"Cannulated Cancellous Screw Ø 6.5 mm ( Full Thread )","url":"https://biomedorthopedics.com/product/cannulated-cancellous-screw-o-6-5-mm-full-thread/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/08/T6A0172-9-6.5mm-cancellous-cannulated-F-t.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BOI.117.25","size":"25"},{"code":"BOI.117.30","size":"30"},{"code":"BOI.117.35","size":"35"},{"code":"BOI.117.40","size":"40"},{"code":"BOI.117.45","size":"45"},{"code":"BOI.117.50","size":"50"},{"code":"BOI.117.55","size":"55"},{"code":"BOI.117.60","size":"60"},{"code":"BOI.117.65","size":"65"},{"code":"BOI.117.70","size":"70"},{"code":"BOI.117.75","size":"75"},{"code":"BOI.117.80","size":"80"},{"code":"BOI.117.85","size":"85"},{"code":"BOI.117.90","size":"90"},{"code":"BOI.117.95","size":"95"},{"code":"BOI.117.100","size":"100"},{"code":"BOI.117.105","size":"105"},{"code":"BOI.117.110","size":"110"}]},{"name":"Cortical Screws Ø 3.5 mm","url":"https://biomedorthopedics.com/product/cortical-screws-o-3-5-mm/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/08/60-16-4.5mm-cortical-screw.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BOI.01.103.10","size":"10"},{"code":"BOI.01.103.12","size":"12"},{"code":"BOI.01.103.14","size":"14"},{"code":"BOI.01.103.16","size":"16"},{"code":"BOI.01.103.18","size":"18"},{"code":"BOI.01.103.20","size":"20"},{"code":"BOI.01.103.22","size":"22"},{"code":"BOI.01.103.24","size":"24"},{"code":"BOI.01.103.26","size":"26"},{"code":"BOI.01.103.28","size":"28"},{"code":"BOI.01.103.30","size":"30"},{"code":"BOI.01.103.32","size":"32"},{"code":"BOI.01.103.34","size":"34"},{"code":"BOI.01.103.36","size":"36"},{"code":"BOI.01.103.38","size":"38"},{"code":"BOI.01.103.40","size":"40"},{"code":"BOI.01.103.42","size":"42"},{"code":"BOI.01.103.44","size":"44"},{"code":"BOI.01.103.46","size":"46"},{"code":"BOI.01.103.48","size":"48"},{"code":"BOI.01.103.50","size":"50"},{"code":"BOI.01.103.52","size":"52"},{"code":"BOI.01.103.54","size":"54"},{"code":"BOI.01.103.56","size":"56"},{"code":"BOI.01.103.58","size":"58"},{"code":"BOI.01.103.60","size":"60"}]},{"name":"Cortical Screws Ø 4.5 mm","url":"https://biomedorthopedics.com/product/cortical-screws-o-4-5-mm/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/08/60-16-4.5mm-cortical-screw.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BOI.01.109.12","size":"12"},{"code":"BOI.01.109.14","size":"14"},{"code":"BOI.01.109.16","size":"16"},{"code":"BOI.01.109.18","size":"18"},{"code":"BOI.01.109.20","size":"20"},{"code":"BOI.01.109.22","size":"22"},{"code":"BOI.01.109.24","size":"24"},{"code":"BOI.01.109.26","size":"26"},{"code":"BOI.01.109.28","size":"28"},{"code":"BOI.01.109.30","size":"30"},{"code":"BOI.01.109.32","size":"32"},{"code":"BOI.01.109.34","size":"34"},{"code":"BOI.01.109.36","size":"36"},{"code":"BOI.01.109.38","size":"38"},{"code":"BOI.01.109.40","size":"40"},{"code":"BOI.01.109.42","size":"42"},{"code":"BOI.01.109.44","size":"44"},{"code":"BOI.01.109.46","size":"46"},{"code":"BOI.01.109.48","size":"48"},{"code":"BOI.01.109.50","size":"50"},{"code":"BOI.01.109.52","size":"52"},{"code":"BOI.01.109.54","size":"54"},{"code":"BOI.01.109.56","size":"56"},{"code":"BOI.01.109.58","size":"58"},{"code":"BOI.01.109.60","size":"60"},{"code":"BOI.01.109.62","size":"62"},{"code":"BOI.01.109.64","size":"64"},{"code":"BOI.01.109.66","size":"66"},{"code":"BOI.01.109.68","size":"68"},{"code":"BOI.01.109.70","size":"70"},{"code":"BOI.01.109.75","size":"75"}]},{"name":"DCP Plate Narrow For 4.5 mm Screw","url":"https://biomedorthopedics.com/product/dcp-plate-narrow-for-4-5-mm-screw/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/08/DCP-Narrow-4.5-mm-non-locking-plate.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BOI.137.04","size":"4 Holes"},{"code":"BOI.137.05","size":"5 Holes"},{"code":"BOI.137.06","size":"6 Holes"},{"code":"BOI.137.07","size":"7 Holes"},{"code":"BOI.137.08","size":"8 Holes"},{"code":"BOI.137.09","size":"9 Holes"},{"code":"BOI.137.10","size":"10 Holes"},{"code":"BOI.137.11","size":"11 Holes"},{"code":"BOI.137.12","size":"12 Holes"},{"code":"BOI.137.13","size":"13 Holes"},{"code":"BOI.137.14","size":"14 Holes"}]},{"name":"DCP Plate Small For 3.5 mm Screw","url":"https://biomedorthopedics.com/product/dcp-plate-small-for-3-5-mm-screw/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/08/Small-DCP-3.5-MM.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BOI.125.04","size":"4 Holes"},{"code":"BOI.125.05","size":"5 Holes"},{"code":"BOI.125.06","size":"6 Holes"},{"code":"BOI.125.07","size":"7 Holes"},{"code":"BOI.125.08","size":"8 Holes"},{"code":"BOI.125.09","size":"9 Holes"},{"code":"BOI.125.10","size":"10 Holes"},{"code":"BOI.125.11","size":"11 Holes"},{"code":"BOI.125.12","size":"12 Holes"},{"code":"BOI.125.13","size":"13 Holes"},{"code":"BOI.125.14","size":"14 Holes"}]},{"name":"Dhs Lag Screw","url":"https://biomedorthopedics.com/product/dhs-lag-screw/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/08/83-3.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BOI.118.50","size":"50"},{"code":"BOI.118.55","size":"55"},{"code":"BOI.118.60","size":"60"},{"code":"BOI.118.65","size":"65"},{"code":"BOI.118.70","size":"70"},{"code":"BOI.118.75","size":"75"},{"code":"BOI.118.80","size":"80"},{"code":"BOI.118.85","size":"85"},{"code":"BOI.118.90","size":"90"},{"code":"BOI.118.95","size":"95"},{"code":"BOI.118.100","size":"100"},{"code":"BOI.118.105","size":"105"},{"code":"BOI.118.110","size":"110"}]},{"name":"DHS Plate ( DCP Holes ) Long Barrel 135°","url":"https://biomedorthopedics.com/product/dhs-plate-dcp-holes-long-barrel-135/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/08/84-DHS-Plate-135-Degree.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BOI.140.135°.02","size":"2 Holes"},{"code":"BOI.140.135°.03","size":"3 Holes"},{"code":"BOI.140.135°.04","size":"4 Holes"},{"code":"BOI.140.135°.05","size":"5 Holes"},{"code":"BOI.140.135°.06","size":"6 Holes"},{"code":"BOI.140.135°.07","size":"7 Holes"},{"code":"BOI.140.135°.08","size":"8 Holes"},{"code":"BOI.140.135°.09","size":"9 Holes"},{"code":"BOI.140.135°.10","size":"10 Holes"},{"code":"BOI.140.135°.11","size":"12 Holes"},{"code":"BOI.140.135°.12","size":"14 Holes"},{"code":"BOI.140.135°.13","size":"16 Holes"}]},{"name":"L Buttress Plate For 4.5 mm Screw","url":"https://biomedorthopedics.com/product/l-buttress-plate-for-4-5-mm-screw/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/08/L-Buttress-Non-Locking-Plate.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BOI.132.03","size":"3 Holes"},{"code":"BOI.132.04","size":"4 Holes"},{"code":"BOI.132.05","size":"5 Holes"},{"code":"BOI.132.06","size":"6 Holes"},{"code":"BOI.132.07","size":"7 Holes"},{"code":"BOI.132.08","size":"8 Holes"},{"code":"BOI.132.09","size":"9 Holes"},{"code":"BOI.132.10","size":"10 Holes"},{"code":"BOI.132.11","size":"11 Holes"},{"code":"BOI.132.12","size":"12 Holes"}]},{"name":"LC DCP Plate Broad For 4.5 mm Screw","url":"https://biomedorthopedics.com/product/lc-dcp-plate-broad-for-4-5-mm-screw/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/08/Lc-Dcp-Broad-Non-Locking-Plate.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BOI.158.04","size":"4 Holes"},{"code":"BOI.158.05","size":"5 Holes"},{"code":"BOI.158.06","size":"6 Holes"},{"code":"BOI.158.07","size":"7 Holes"},{"code":"BOI.158.08","size":"8 Holes"},{"code":"BOI.158.09","size":"9 Holes"},{"code":"BOI.158.10","size":"10 Holes"},{"code":"BOI.158.11","size":"11 Holes"},{"code":"BOI.158.12","size":"12 Holes"},{"code":"BOI.158.13","size":"13 Holes"},{"code":"BOI.158.14","size":"14 Holes"}]},{"name":"ONE Third Tubular Plate For 3.5 mm Screw","url":"https://biomedorthopedics.com/product/one-third-tubular-plate-for-3-5-mm-screw/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/08/One-Third-Plate-3.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BOI.121.04","size":"4 Holes"},{"code":"BOI.121.05","size":"5 Holes"},{"code":"BOI.121.06","size":"6 Holes"},{"code":"BOI.121.07","size":"7 Holes"},{"code":"BOI.121.08","size":"8 Holes"},{"code":"BOI.121.09","size":"9 Holes"},{"code":"BOI.121.10","size":"10 Holes"},{"code":"BOI.121.11","size":"11 Holes"},{"code":"BOI.121.12","size":"12 Holes"}]},{"name":"Reconstruction Plate For 3.5 mm Screw Round Hole","url":"https://biomedorthopedics.com/product/reconstruction-plate-for-3-5-mm-screw-round-hole/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/08/Recon-Plate-Non-Locking-PlateRound-Hole.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BOI.222.04","size":"4 Holes"},{"code":"BOI.222.05","size":"5 Holes"},{"code":"BOI.222.06","size":"6 Holes"},{"code":"BOI.222.07","size":"7 Holes"},{"code":"BOI.222.08","size":"8 Holes"},{"code":"BOI.222.09","size":"9 Holes"},{"code":"BOI.222.10","size":"10 Holes"},{"code":"BOI.222.11","size":"11 Holes"},{"code":"BOI.222.12","size":"12 Holes"},{"code":"BOI.222.13","size":"13 Holes"},{"code":"BOI.222.14","size":"14 Holes"},{"code":"BOI.222.15","size":"15 Holes"},{"code":"BOI.222.16","size":"16 Holes"},{"code":"BOI.222.17","size":"17 Holes"},{"code":"BOI.222.18","size":"18 Holes"},{"code":"BOI.222.19","size":"19 Holes"},{"code":"BOI.222.20","size":"20 Holes"},{"code":"BOI.222.21","size":"21 Holes"},{"code":"BOI.222.22","size":"22 Holes"}]},{"name":"Semi Tubular Plate For 4.5 mm Screw","url":"https://biomedorthopedics.com/product/semi-tubular-plate-for-4-5-mm-screw/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/08/Semi-Tubular-Plate-4.5-mm.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BOI.225.04","size":"4 Holes"},{"code":"BOI.225.05","size":"5 Holes"},{"code":"BOI.225.06","size":"6 Holes"},{"code":"BOI.225.07","size":"7 Holes"},{"code":"BOI.225.08","size":"8 Holes"},{"code":"BOI.225.09","size":"9 Holes"},{"code":"BOI.225.10","size":"10 Holes"},{"code":"BOI.225.11","size":"11 Holes"},{"code":"BOI.225.12","size":"12 Holes"},{"code":"BOI.225.13","size":"13 Holes"},{"code":"BOI.225.14","size":"14 Holes"},{"code":"BOI.225.15","size":"15 Holes"}]},{"name":"T Buttress Plate For 4.5 mm Screw","url":"https://biomedorthopedics.com/product/t-buttress-plate-for-4-5-mm-screw/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/08/T-Buttress-Non-Locking-Plate.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BOI.229.03","size":"3 Holes"},{"code":"BOI.229.04","size":"4 Holes"},{"code":"BOI.229.05","size":"5 Holes"},{"code":"BOI.229.06","size":"6 Holes"},{"code":"BOI.229.07","size":"7 Holes"},{"code":"BOI.229.08","size":"8 Holes"},{"code":"BOI.229.09","size":"9 Holes"},{"code":"BOI.229.10","size":"10 Holes"},{"code":"BOI.229.11","size":"11 Holes"},{"code":"BOI.229.12","size":"12 Holes"}]}],"hip-prosthesis":[{"name":"Acetabular Cup","url":"https://biomedorthopedics.com/product/acetabular-cup/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/Acetabular-Cup.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BAU22 001-37","size":"Ø 37 mm"},{"code":"BAU22 002-39","size":"Ø 39 mm"},{"code":"BAU22 003-41","size":"Ø 41 mm"},{"code":"BAU22 004-43","size":"Ø 43 mm"}]},{"name":"Modular Head","url":"https://biomedorthopedics.com/product/modular-head/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/modular-head.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BMH22 001-3.5","size":"Short Neck Length -3.5 mm"},{"code":"BMH22 002-0","size":"Standard Neck Length – 0 mm"},{"code":"BMH22 003+3.5","size":"Long Neck Length – +3.5 mm"},{"code":"BMH22 004","size":"Extra Long Neck Length – +6.5 mm"},{"code":"BMH22 005","size":"Special Neck Length – 10 mm"}]},{"name":"Bipolar Head","url":"https://biomedorthopedics.com/product/bipolar-head/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/bipolar-head.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BBH22 001-37","size":"Ø 37 mm","notes":"ID 22"},{"code":"BBH22 002-39","size":"Ø 39 mm","notes":"ID 22"},{"code":"BBH22 003-41","size":"Ø 41 mm","notes":"ID 22"},{"code":"BBH22 004-43","size":"Ø 43 mm","notes":"ID 22"}]},{"name":"Fixed Bipolar","url":"https://biomedorthopedics.com/product/fixed-bipolar/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/fixed-bilopar.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BA.025.35F.037","size":"37"},{"code":"BA.025.35F.039","size":"39"},{"code":"BA.025.35F.041","size":"41"},{"code":"BA.025.35F.043","size":"43"},{"code":"BA.025.35F.045","size":"45"},{"code":"BA.025.35F.047","size":"47"},{"code":"BA.025.35F.049","size":"49"},{"code":"BA.025.35F.051","size":"51"},{"code":"BA.025.35F.053","size":"53"},{"code":"BA.025.35F.055","size":"55"}]},{"name":"Modular Femoral Stem","url":"https://biomedorthopedics.com/product/modular-femoral-stem/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/modular-femural-stem.jpg","material":"ALL OUR PRODUCTS ARE FABRICATED USING SURGICAL GRADE STAINLESS STEEL (SS 316L)","specs":[{"code":"BBJ 001-03","size":"3.0"},{"code":"BBJ 001-05","size":"5.0"},{"code":"BBJ 001-07","size":"7.0"},{"code":"BBJ 001-09","size":"9.0"},{"code":"BBJ 001-11.2","size":"11.2"},{"code":"BBJ 001-13.7","size":"13.7"}]}],"titanium-implants":[{"name":"Clavicle Plate Locking 3.5 mm","url":"https://biomedorthopedics.com/product/clavicle-plate-locking-3-5-mm/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/07/67-Clavical-Plate-Titanum.jpg","material":"ALL OUR PRODUCTS ARE MADE FROM TITANINUM MATERIAL","specs":[{"code":"BO.9928.04","size":"4 Holes"},{"code":"BO.9928.05","size":"5 Holes"},{"code":"BO.9928.05","size":"5 Holes"},{"code":"BO.9928.07","size":"7 Holes"},{"code":"BO.9928.08","size":"8 Holes"},{"code":"BO.9928.09","size":"9 Holes"},{"code":"BO.9928.10","size":"10 Holes"}]},{"name":"Cortical Screw Ø 2.4 mm","url":"https://biomedorthopedics.com/product/cortical-screw-o-2-4-mm/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/08/T6A0083-cortical-screw-titanium.jpg","material":"ALL OUR PRODUCTS ARE MADE FROM TITANINUM MATERIAL","specs":[{"code":"BO.186.06","size":"6 Holes"},{"code":"BO.186.08","size":"8 Holes"},{"code":"BO.186.10","size":"10 Holes"},{"code":"BO.186.12","size":"12 Holes"},{"code":"BO.186.14","size":"14 Holes"},{"code":"BO.186.16","size":"16 Holes"},{"code":"BO.186.18","size":"18 Holes"},{"code":"BO.186.20","size":"20 Holes"},{"code":"BO.186.22","size":"22 Holes"},{"code":"BO.186.24","size":"24 Holes"},{"code":"BO.186.26","size":"26 Holes"},{"code":"BO.186.28","size":"28 Holes"},{"code":"BO.186.30","size":"30 Holes"}]},{"name":"Cortical Screw Ø 3.5 mm","url":"https://biomedorthopedics.com/product/cortical-screw-o-3-5-mm/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/08/T6A0080-cortical-screws-titanium.jpg","material":"ALL OUR PRODUCTS ARE MADE FROM TITANINUM MATERIAL","specs":[{"code":"BOI.01.103.10","size":"10"},{"code":"BOI.01.103.12","size":"12 Holes"},{"code":"BOI.01.103.14","size":"14 Holes"},{"code":"BOI.01.103.16","size":"16"},{"code":"BOI.01.103.18","size":"18"},{"code":"BOI.01.103.20","size":"20"},{"code":"BOI.01.103.22","size":"22"},{"code":"BOI.01.103.24","size":"24"},{"code":"BOI.01.103.26","size":"26"},{"code":"BOI.01.103.28","size":"28"},{"code":"BOI.01.103.30","size":"30"},{"code":"BOI.01.103.32","size":"32"},{"code":"BOI.01.103.34","size":"34"},{"code":"BOI.01.103.36","size":"36"},{"code":"BOI.01.103.38","size":"38"},{"code":"BOI.01.103.40","size":"40 Holes"},{"code":"BOI.01.103.42","size":"42"},{"code":"BOI.01.103.44","size":"44"},{"code":"BOI.01.103.46","size":"46"},{"code":"BOI.01.103.48","size":"48"},{"code":"BOI.01.103.50","size":"50"},{"code":"BOI.01.103.52","size":"52"},{"code":"BOI.01.103.54","size":"54"},{"code":"BOI.01.103.56","size":"56"},{"code":"BOI.01.103.58","size":"58"},{"code":"BOI.01.103.60","size":"60"}]},{"name":"Distal Femur locking Plate 5 mm","url":"https://biomedorthopedics.com/product/distal-femur-locking-plate-5-mm/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/08/bipola-1.jpg","material":"ALL OUR PRODUCTS ARE MADE FROM TITANINUM MATERIAL","specs":[{"code":"BO.164.03","size":"3 Holes"},{"code":"BO.164.05","size":"5 Holes"},{"code":"BO.164.07","size":"7 Holes"},{"code":"BO.164.09","size":"9 Holes"},{"code":"BO.164.11","size":"11 Holes"},{"code":"BO.164.13","size":"13 Holes"}]},{"name":"Lateral Tibial Locking Plate 5 mm","url":"https://biomedorthopedics.com/product/lateral-tibial-locking-plate-5-mm-2/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/07/T6A00634.5mm-proximal-lateral-tibia-plate-titanium.jpg","material":"ALL OUR PRODUCTS ARE MADE FROM TITANINUM MATERIAL","specs":[{"code":"BO.159.03","size":"3 Holes"},{"code":"BO.159.05","size":"5 Holes"},{"code":"BO.159.07","size":"7 Holes"},{"code":"BO.159.09","size":"9 Holes"},{"code":"BO.159.11","size":"11 Holes"},{"code":"BO.159.13","size":"13 Holes"}]},{"name":"LCP Volar Distal Radius Plate 2.4mm","url":"https://biomedorthopedics.com/product/lcp-volar-distal-radius-plate-2-4-mm/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/07/70.jpg","material":"ALL OUR PRODUCTS ARE MADE FROM TITANINUM MATERIAL","specs":[{"code":"BOI.197.03","size":"3 Holes, HEAD 5 Holes"},{"code":"BOI.197.04","size":"4 Holes, HEAD 5 Holes"},{"code":"BOI.197.05","size":"5 Holes, HEAD 5 Holes"}]},{"name":"LCP Volar two-Column Distal Radius Plate 2.4mm","url":"https://biomedorthopedics.com/product/lcp-volar-two-column-distal-radius-plate-2-4-mm/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/07/T6A0068.jpg","material":"ALL OUR PRODUCTS ARE MADE FROM TITANINUM MATERIAL","specs":[{"code":"BO.9946.02","size":"2 Holes"},{"code":"BO.9946.03","size":"3 Holes"},{"code":"BO.9946.04","size":"4 Holes"},{"code":"BO.9946.05","size":"5 Holes"},{"code":"BO.9946.06","size":"6 Holes"},{"code":"BO.9946.07","size":"7 Holes"},{"code":"BO.9946.08","size":"8 Holes"},{"code":"BO.9946.09","size":"9 Holes"}]},{"name":"Locking Screw Ø 3.5 mm","url":"https://biomedorthopedics.com/product/locking-screw-o-3-5-mm/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/08/T6A0081-bio-fixation-screws-titanium.jpg","material":"ALL OUR PRODUCTS ARE MADE FROM TITANINUM MATERIAL","specs":[{"code":"BO.168.12","size":"12"},{"code":"BO.168.14","size":"14"},{"code":"BO.168.16","size":"16"},{"code":"BO.168.18","size":"18"},{"code":"BO.168.20","size":"20"},{"code":"BO.168.22","size":"22"},{"code":"BO.168.24","size":"24"},{"code":"BO.168.26","size":"26"},{"code":"BO.168.28","size":"28"},{"code":"BO.168.30","size":"30"},{"code":"BO.168.32","size":"32"},{"code":"BO.168.34","size":"34"},{"code":"BO.168.36","size":"36"},{"code":"BO.168.38","size":"38"},{"code":"BO.168.40","size":"40"},{"code":"BO.168.45","size":"45"},{"code":"BO.168.50","size":"50"},{"code":"BO.168.55","size":"55"},{"code":"BO.168.60","size":"60"},{"code":"BO.168.65","size":"65"},{"code":"BO.168.70","size":"70"},{"code":"BO.168.75","size":"75"},{"code":"BO.168.80","size":"80"},{"code":"BO.168.85","size":"85"}]},{"name":"Small Compression Locking Plate 3.5mm","url":"https://biomedorthopedics.com/product/small-compression-locking-plate-3-5-mm-2/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/07/T6A0065-small-lcp-plate-titanium.jpg","material":"ALL OUR PRODUCTS ARE MADE FROM TITANINUM MATERIAL","specs":[{"code":"BO.155.04","size":"4 Holes"},{"code":"BO.155.05","size":"5 Holes"},{"code":"BO.155.06","size":"6 Holes"},{"code":"BO.155.07","size":"7 Holes"},{"code":"BO.155.08","size":"8 Holes"},{"code":"BO.155.09","size":"9 Holes"},{"code":"BO.155.10","size":"10 Holes"},{"code":"BO.155.11","size":"11 Holes"},{"code":"BO.155.12","size":"12 Holes"}]}],"spine-implants":[{"name":"Anterior Cervical Cage (Square type)","url":"https://biomedorthopedics.com/product/anterior-cervical-cage-square-type-2/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/Anterior-Cervical-Plate-llSYS-3.jpg","material":"Titanium","specs":[{"code":"Diameter","size":"4mm, To 10mm"},{"code":"Length","size":"12mmx14mm, 12mmx16mm"},{"code":"Product Code","size":"BOI.144"}]},{"name":"Anterior Cervical Cage (Square Type)","url":"https://biomedorthopedics.com/product/anterior-cervical-cage-square-type/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/Anterior-Cervical-Cage-1.jpg","material":"Titanium","specs":[{"code":"Diameter","size":"4mm, To 10mm"},{"code":"Length","size":"12mmx14mm, 12mmx16mm"},{"code":"Product Code","size":"BOI.144"}]},{"name":"Anterior Cervical Plate – II SYS","url":"https://biomedorthopedics.com/product/anterior-cervical-plate-ii-sys/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/Anterior-Cervical-Plate-llSYS-3.jpg","material":"Titanium","specs":[{"code":"Diameter","size":"23mm to 74mm (Diff. 3.0mm)"},{"code":"4mm Bone Screw","size":"12mm to 30mm"}]},{"name":"Anterior Cervical Screw 4.0mm","url":"https://biomedorthopedics.com/product/anterior-cervical-screw-4-0mm/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/Anterior-Cervical-Screw-4.0-mm-1.jpg","material":"Titanium","specs":[{"code":"Diameter","size":"4.0mm"},{"code":"Screw Length","size":"10mm to 30mm (Diff. 2.0mm)"}]},{"name":"Cervical Cage Octa","url":"https://biomedorthopedics.com/product/cervical-cage-octa/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/Cervical-Cage-Octa-2.jpg","material":"Titanium","specs":[{"code":"Diameter","size":"3.5mm, 4.5mm, 5.5mm, 6.5mm, 7.5mm, 8.5mm"},{"code":"Length","size":"12mm, 14mm, 16mm"}]},{"name":"Eco Cage","url":"https://biomedorthopedics.com/product/eco-cage/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/Eco-Cage-2.jpg","material":"Titanium","specs":[{"code":"Diameter","size":"10mm, 12mm, 14mm, 16mm, 18mm, 20mm"},{"code":"Length","size":"15mm to 100mm (Diff. 5.0mm)"}]},{"name":"Expandable Cage","url":"https://biomedorthopedics.com/product/expandable-cage/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/Expandable-Cage-2.jpg","material":"Titanium","specs":[{"code":"Diameter","size":"10mm, 12mm, 14mm, 16mm, 18mm"},{"code":"Length","size":"25mm to 35mm, 35mm to 55mm, 55mm to 75mm"}]},{"name":"Laminar Hook Angle Blade","url":"https://biomedorthopedics.com/product/laminar-hook-angle-blade/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/Laminar-Hook-Angle-Blade-2.jpg","material":"Titanium","specs":[{"code":"Diameter","size":"Standard"},{"code":"Length","size":"Standard"}]},{"name":"Laminar Hook Narrow Blade","url":"https://biomedorthopedics.com/product/laminar-hook-narrow-blade/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/Laminar-Hook-Angle-Blade-2.jpg","material":"Titanium","specs":[{"code":"Diameter","size":"Standard"},{"code":"Length","size":"Standard"}]},{"name":"Laminar Hook Wide Blade","url":"https://biomedorthopedics.com/product/laminar-hook-wide-blade/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/Laminar-Hook-Angle-Blade-2.jpg","material":"Titanium","specs":[{"code":"Diameter","size":"Standard"},{"code":"Length","size":"Standard"}]},{"name":"Mini Mono Axial Screw","url":"https://biomedorthopedics.com/product/mini-mono-axial-screw/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/Mini-Mono-Axial-Screw-2.jpg","material":"Titanium","specs":[{"code":"Diameter","size":"3.5mm, 4.2mm"},{"code":"Length","size":"12mm to 40mm (Diff. 2.0mm)"}]},{"name":"Mini Poly Axial Screw","url":"https://biomedorthopedics.com/product/mini-poly-axial-screw/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/Mini-Poly-Axial-Screw-2.jpg","material":"Titanium","specs":[{"code":"Diameter","size":"3.5mm, 4.2mm"},{"code":"Length","size":"12mm to 40mm (Diff. 2.0mm)"}]},{"name":"Mono Axial Reduction (DLX)","url":"https://biomedorthopedics.com/product/mono-axial-reduction-dlx/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/Mono-Axial-Reduction-DLX-2.jpg","material":"Titanium","specs":[{"code":"Diameter","size":"4.5mm, 5.5mm, 6.5mm, 7.5mm"},{"code":"Length","size":"25mm to 55mm (Diff. 5.0mm)"}]},{"name":"Mono Axial Screw (DLX)","url":"https://biomedorthopedics.com/product/mono-axial-screw-dlx/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/Mono-axial-ScrewDLX-1.jpg","material":"Titanium","specs":[{"code":"Diameter","size":"4.5mm, 5.5mm, 6.5mm, 7.5mm"},{"code":"Length","size":"25mm to 55mm (Diff. 5.0mm)"}]},{"name":"Occipital Loops","url":"https://biomedorthopedics.com/product/occipital-loops/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/Occipital-Loops-1.jpg","material":"Titanium","specs":[{"code":"Diameter","size":"4mm"}]},{"name":"Plif Cage","url":"https://biomedorthopedics.com/product/plif-cage/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/Plif-Cage-3.jpg","material":"Titanium","specs":[{"code":"Diameter","size":"7mm, 8mm, 9mm, 10mm, 11mm"},{"code":"Length","size":"20mm, 25mm, 30mm"}]},{"name":"Plif Cage","url":"https://biomedorthopedics.com/product/plif-cage-2/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/Plif-Cage-3.jpg","material":"Titanium","specs":[{"code":"Diameter","size":"7mm, 8mm, 9mm, 10mm, 11mm"},{"code":"Length","size":"20mm, 25mm, 30mm"}]},{"name":"Plif Cage (Bullet Type)","url":"https://biomedorthopedics.com/product/plif-cage-bullet-type/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/Plif-CageBullet-Type-2.jpg","material":"Titanium","specs":[{"code":"Diameter","size":"8mm, 10mm, 12mm, 14mm"},{"code":"Length","size":"20mm, 25mm, 30mm"}]},{"name":"Poly Axial Reduction (DLX)","url":"https://biomedorthopedics.com/product/poly-axial-reduction-dlx/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/Poly-Axial-ReductionDLX-1.jpg","material":"Titanium","specs":[{"code":"Diameter","size":"4.5mm, 5.5mm, 6.5mm, 7.5mm"},{"code":"Length","size":"25mm to 55mm (Diff. 5.0mm)"}]},{"name":"Posterior Occipital Plate (Butterfly Type)","url":"https://biomedorthopedics.com/product/posterior-occipital-plate-butterfly-type/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/Posterior-Occipital-PlateButterfly-Type-1.jpg","material":"Titanium","specs":[{"code":"Diameter","size":"3.5mm"},{"code":"Length","size":"45mm, 50mm, 55mm, 60mm"}]},{"name":"Posterior Occipital Rod","url":"https://biomedorthopedics.com/product/posterior-occipital-rod/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/Posterior-Occipital-Rod-2.jpg","material":"Titanium","specs":[{"code":"Diameter","size":"3.5mm"},{"code":"Length","size":"Standard"}]},{"name":"Transverse Connector","url":"https://biomedorthopedics.com/product/transverse-connector/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/Transverse-Connector-2.jpg","material":"Titanium","specs":[{"code":"Diameter","size":"Standard"},{"code":"Length","size":"Standard"}]}],"arthroscopy-implants":[{"name":"ACL Screw","url":"https://biomedorthopedics.com/product/acl-screw-2/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/06/ACL-Screw.jpg","material":null,"specs":[]},{"name":"Endo Button","url":"https://biomedorthopedics.com/product/endo-button-2/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/06/Endo-Button.jpg","material":null,"specs":[]},{"name":"Endo Button With Loops","url":"https://biomedorthopedics.com/product/endo-button-with-loops-3/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/06/Endo-Button-With-Loops.jpg","material":null,"specs":[]},{"name":"Endo Button With Loops (2)","url":"https://biomedorthopedics.com/product/endo-button-with-loops-2/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/06/Endo-Button-With-Loops-2-1.jpg","material":null,"specs":[]},{"name":"Ligament Spike Staple(U Shape)","url":"https://biomedorthopedics.com/product/ligament-spike-stapleu-shape/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/06/Ligament-Spike-StapleU-Shape-1.jpg","material":null,"specs":[]},{"name":"Ligament Spike Washer(Round Shape)","url":"https://biomedorthopedics.com/product/ligament-spike-washerround-shape/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/06/Ligament-Spike-WasherRound-Shape-1.jpg","material":null,"specs":[]},{"name":"Suture Anchor","url":"https://biomedorthopedics.com/product/suture-anchor/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/06/Suture-Anchor-1.jpg","material":null,"specs":[]},{"name":"Suture Anchor With Loops","url":"https://biomedorthopedics.com/product/suture-anchor-with-loops/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/06/Suture-Anchor-With-Loops-1.jpg","material":null,"specs":[]},{"name":"Suture Disk","url":"https://biomedorthopedics.com/product/suture-disk/","image":"https://biomedorthopedics.com/wp-content/uploads/2024/06/Suture-Disk.jpg","material":null,"specs":[]}],"maxillofacial-implants":[{"name":"Maxillofacial Implants","url":"https://biomedorthopedics.com/product/maxillofacial-implants/","image":"https://biomedorthopedics.com/wp-content/uploads/2021/11/Maxillofacial-Implant.jpg","material":null,"productCode":"BOI.MXF01","types":["Straight","Curved","L type","Y type","Mini Orbital Plate","Double T plate"],"specs":[]}]}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ---------- Loader ----------
+window.addEventListener('load', ()=>{
+  setTimeout(()=>document.getElementById('loader').classList.add('hide'), 500);
+});
+
+// ---------- Custom cursor ----------
+const cursor = document.getElementById('cursor');
+const cursorDot = document.getElementById('cursor-dot');
+let mx=0,my=0,cx=0,cy=0;
+window.addEventListener('mousemove', e=>{
+  mx=e.clientX; my=e.clientY;
+  cursorDot.style.left=mx+'px'; cursorDot.style.top=my+'px';
+});
+(function loop(){ cx+=(mx-cx)*0.15; cy+=(my-cy)*0.15;
+  cursor.style.left=cx+'px'; cursor.style.top=cy+'px';
+  requestAnimationFrame(loop);
+})();
+document.querySelectorAll('a,button,.card-inner,.person-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cursor.style.width='40px';cursor.style.height='40px';cursor.style.borderColor='#00d9ff';});
+  el.addEventListener('mouseleave',()=>{cursor.style.width='22px';cursor.style.height='22px';});
+});
+
+// ---------- Nav ----------
+const navbar=document.getElementById('navbar');
+window.addEventListener('scroll',()=>{
+  navbar.classList.toggle('scrolled', window.scrollY>40);
+});
+const burger=document.getElementById('burger');
+const navLinks=document.getElementById('navLinks');
+burger.addEventListener('click',()=>navLinks.classList.toggle('open'));
+navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>navLinks.classList.remove('open')));
+
+// ---------- Scroll reveal ----------
+const io=new IntersectionObserver((entries)=>{
+  entries.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target);} });
+},{threshold:0.15});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// ---------- Product catalog (scraped from biomedorthopedics.com) ----------
+const CATALOG = JSON.parse(document.getElementById('product-data').textContent);
+const CATS = [
+  {slug:'locking-implants', label:'Locking Implants'},
+  {slug:'interlocking-implants', label:'Interlocking Implants'},
+  {slug:'trauma-implants', label:'Trauma Implants'},
+  {slug:'hip-prosthesis', label:'Hip Prosthesis'},
+  {slug:'titanium-implants', label:'Titanium Implants'},
+  {slug:'spine-implants', label:'Spine Implants'},
+  {slug:'arthroscopy-implants', label:'Arthroscopy Implants'},
+  {slug:'maxillofacial-implants', label:'Maxillofacial Implants'}
+];
+// flatten with category label attached
+let ALL_PRODUCTS = [];
+CATS.forEach(c=>{
+  (CATALOG[c.slug]||[]).forEach(p=>ALL_PRODUCTS.push(Object.assign({}, p, {catSlug:c.slug, catLabel:c.label})));
+});
+
+let activeCat = 'all';
+let searchTerm = '';
+
+const grid = document.getElementById('productsGrid');
+const tabsEl = document.getElementById('catTabs');
+const resultsCountEl = document.getElementById('resultsCount');
+const searchInput = document.getElementById('productSearch');
+
+// build tabs
+function buildTabs(){
+  const allTab = document.createElement('div');
+  allTab.className='cat-tab active';
+  allTab.dataset.slug='all';
+  allTab.innerHTML=`All Implants <span class="count">${ALL_PRODUCTS.length}</span>`;
+  tabsEl.appendChild(allTab);
+  CATS.forEach(c=>{
+    const count=(CATALOG[c.slug]||[]).length;
+    const tab=document.createElement('div');
+    tab.className='cat-tab';
+    tab.dataset.slug=c.slug;
+    tab.innerHTML=`${c.label} <span class="count">${count}</span>`;
+    tabsEl.appendChild(tab);
+  });
+  tabsEl.addEventListener('click', e=>{
+    const t=e.target.closest('.cat-tab');
+    if(!t)return;
+    tabsEl.querySelectorAll('.cat-tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    activeCat=t.dataset.slug;
+    renderGrid();
+  });
+}
+
+function renderGrid(){
+  let list = activeCat==='all' ? ALL_PRODUCTS : ALL_PRODUCTS.filter(p=>p.catSlug===activeCat);
+  if(searchTerm.trim()){
+    const s=searchTerm.trim().toLowerCase();
+    list = list.filter(p=>p.name.toLowerCase().includes(s));
+  }
+  resultsCountEl.textContent = `Showing ${list.length} of ${ALL_PRODUCTS.length} implant products`;
+  grid.innerHTML='';
+  if(list.length===0){
+    grid.innerHTML='<div class="no-results">No implants match your search. Try a different keyword.</div>';
+    return;
+  }
+  list.forEach((p,idx)=>{
+    const card=document.createElement('div');
+    card.className='product-card reveal';
+    const codeLabel = (p.specs && p.specs[0] && p.specs[0].code) ? p.specs[0].code : (p.productCode || p.catLabel);
+    card.innerHTML=`
+      <div class="product-img">
+        <img src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML='<div class=&quot;img-fallback&quot;>${p.name.replace(/'/g,"&#39;")}</div>'">
+      </div>
+      <div class="product-body">
+        <h4>${p.name}</h4>
+        <span class="pcode">${codeLabel}</span>
+        <div class="product-more">Read More →</div>
+      </div>`;
+    card.addEventListener('click', ()=>openModal(p));
+    grid.appendChild(card);
+    // stagger reveal
+    setTimeout(()=>{ io.observe(card); }, 0);
+  });
+}
+
+searchInput.addEventListener('input', e=>{
+  searchTerm = e.target.value;
+  renderGrid();
+});
+
+// ---------- Product modal ----------
+const modal=document.getElementById('productModal');
+const modalImg=document.getElementById('modalImg');
+const modalCat=document.getElementById('modalCat');
+const modalTitle=document.getElementById('modalTitle');
+const modalMaterial=document.getElementById('modalMaterial');
+const modalTableWrap=document.getElementById('modalTableWrap');
+const modalTable=document.getElementById('modalTable');
+const modalTypesWrap=document.getElementById('modalTypesWrap');
+const modalTypes=document.getElementById('modalTypes');
+const modalSourceLink=document.getElementById('modalSourceLink');
+
+function openModal(p){
+  modalImg.src=p.image;
+  modalImg.alt=p.name;
+  modalCat.textContent=p.catLabel;
+  modalTitle.textContent=p.name;
+  modalSourceLink.href=p.url;
+
+  if(p.material){
+    modalMaterial.style.display='block';
+    modalMaterial.textContent=p.material;
+  } else {
+    modalMaterial.style.display='none';
+  }
+
+  if(p.specs && p.specs.length){
+    modalTableWrap.style.display='block';
+    const hasNotes = p.specs.some(r=>r.notes);
+    let html=`<thead><tr><th>Code No.</th><th>Size</th>${hasNotes?'<th>Notes</th>':''}</tr></thead><tbody>`;
+    p.specs.forEach(r=>{
+      html+=`<tr><td>${r.code||''}</td><td>${r.size||''}</td>${hasNotes?`<td>${r.notes||''}</td>`:''}</tr>`;
+    });
+    html+='</tbody>';
+    modalTable.innerHTML=html;
+  } else {
+    modalTableWrap.style.display='none';
+  }
+
+  if(p.types && p.types.length){
+    modalTypesWrap.style.display='block';
+    modalTypes.innerHTML = p.types.map(t=>`<span>${t}</span>`).join('');
+  } else {
+    modalTypesWrap.style.display='none';
+  }
+
+  modal.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  modal.classList.remove('open');
+  document.body.style.overflow='';
+}
+document.getElementById('modalClose').addEventListener('click', closeModal);
+modal.addEventListener('click', e=>{ if(e.target===modal) closeModal(); });
+document.getElementById('modalEnquire').addEventListener('click', closeModal);
+window.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+
+buildTabs();
+renderGrid();
+
+// tilt effect (works for both feature cards and product cards)
+document.addEventListener('mousemove', e=>{
+  document.querySelectorAll('.product-card').forEach(card=>{
+    const r=card.getBoundingClientRect();
+    if(e.clientX<r.left-40||e.clientX>r.right+40||e.clientY<r.top-40||e.clientY>r.bottom+40)return;
+    const x=e.clientX-r.left, y=e.clientY-r.top;
+    const cx=(x/r.width-0.5)*8, cy=(y/r.height-0.5)*-8;
+    if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom){
+      card.style.transform=`translateY(-4px) rotateY(${cx}deg) rotateX(${cy}deg)`;
+    } else {
+      card.style.transform='';
+    }
+  });
+});
+
+// ---------- Counters ----------
+const counters=document.querySelectorAll('.stat-num');
+const counterIO=new IntersectionObserver((entries)=>{
+  entries.forEach(en=>{
+    if(en.isIntersecting){
+      const el=en.target; const target=+el.dataset.target; const span=el.querySelector('span');
+      let cur=0; const step=Math.max(1,Math.ceil(target/60));
+      const t=setInterval(()=>{ cur+=step; if(cur>=target){cur=target;clearInterval(t);} span.textContent=cur; },30);
+      counterIO.unobserve(el);
+    }
+  });
+},{threshold:0.4});
+counters.forEach(c=>counterIO.observe(c));
+
+// ---------- Form ----------
+function handleSubmit(e){
+  e.preventDefault();
+  const btn=e.target.querySelector('.form-submit');
+  const original=btn.textContent;
+  btn.textContent='Enquiry Sent ✓';
+  btn.style.opacity='0.7';
+  setTimeout(()=>{ btn.textContent=original; btn.style.opacity='1'; e.target.reset(); },2200);
+  return false;
+}
+
+// ================= THREE.JS HERO SCENE =================
+(function(){
+  const canvas=document.getElementById('hero-canvas');
+  const renderer=new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 1000);
+  camera.position.set(0,0,26);
+
+  function resize(){
+    const w=canvas.parentElement.clientWidth, h=canvas.parentElement.clientHeight;
+    renderer.setSize(w,h,false);
+    camera.aspect=w/h; camera.updateProjectionMatrix();
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // --- procedural studio environment (for real metallic reflections on the implant) ---
+  function buildStudioEnvMap(){
+    const c=document.createElement('canvas'); c.width=256; c.height=256;
+    const ctx=c.getContext('2d');
+    const grad=ctx.createLinearGradient(0,0,0,256);
+    grad.addColorStop(0.00,'#0e2530');
+    grad.addColorStop(0.28,'#183245');
+    grad.addColorStop(0.48,'#dff4ff');
+    grad.addColorStop(0.52,'#dff4ff');
+    grad.addColorStop(0.70,'#0a1420');
+    grad.addColorStop(1.00,'#02060c');
+    ctx.fillStyle=grad; ctx.fillRect(0,0,256,256);
+    // soft horizon glow band (simulates a studio light strip reflecting on the metal)
+    ctx.fillStyle='rgba(0,217,255,0.55)';
+    ctx.fillRect(0,116,256,10);
+    const envTex=new THREE.CanvasTexture(c);
+    const envScene=new THREE.Scene();
+    envScene.add(new THREE.Mesh(new THREE.SphereGeometry(60,16,16), new THREE.MeshBasicMaterial({map:envTex, side:THREE.BackSide})));
+    const cubeRT=new THREE.WebGLCubeRenderTarget(128,{format:THREE.RGBFormat, generateMipmaps:true, minFilter:THREE.LinearMipmapLinearFilter});
+    const cubeCam=new THREE.CubeCamera(0.1,100,cubeRT);
+    cubeCam.update(renderer, envScene);
+    return cubeRT.texture;
+  }
+  const studioEnvMap=buildStudioEnvMap();
+
+  // lights (studio 3-point setup)
+  scene.add(new THREE.AmbientLight(0x2a3a4e, 1.1));
+  const key=new THREE.PointLight(0xeaf6ff, 3.6, 100); key.position.set(13,11,15); scene.add(key);
+  const fill=new THREE.PointLight(0x3b6bff, 1.6, 100); fill.position.set(-14,-6,10); scene.add(fill);
+  const rim=new THREE.PointLight(0x00d9ff, 2.2, 100); rim.position.set(-4,14,-12); scene.add(rim);
+  const kicker=new THREE.PointLight(0xffffff, 1.4, 60); kicker.position.set(2,-4,18); scene.add(kicker);
+
+  // central piece: a holographic long bone fixed with a real locking plate & screws
+  const group=new THREE.Group();
+  scene.add(group);
+
+  const boneAssembly=new THREE.Group();
+
+  // --- translucent bone silhouette (lathe profile = classic long-bone shape) ---
+  const bonePts=[];
+  const boneProfile=[
+    [0.0,-9.2],[1.35,-8.7],[2.05,-8.0],[1.9,-7.3],[1.15,-6.3],[0.78,-5.0],
+    [0.66,-2.6],[0.62,0],[0.66,2.6],[0.8,5.0],[1.2,6.3],[2.0,7.3],
+    [2.15,8.0],[1.4,8.7],[0.0,9.2]
+  ];
+  boneProfile.forEach(p=>bonePts.push(new THREE.Vector2(p[0],p[1])));
+  const boneGeo=new THREE.LatheGeometry(bonePts, 28);
+  const boneMat=new THREE.MeshStandardMaterial({
+    color:0xdbe6f0, transparent:true, opacity:0.14, roughness:0.6, metalness:0,
+    side:THREE.DoubleSide, depthWrite:false
+  });
+  const boneMesh=new THREE.Mesh(boneGeo, boneMat);
+  boneMesh.rotation.z=Math.PI/2; // lay the bone flat along X
+  boneAssembly.add(boneMesh);
+
+  // holographic scan-line wireframe over the bone
+  const boneWireGeo=new THREE.LatheGeometry(bonePts, 20);
+  const boneWireMat=new THREE.MeshBasicMaterial({color:0x00d9ff, wireframe:true, transparent:true, opacity:0.22});
+  const boneWire=new THREE.Mesh(boneWireGeo, boneWireMat);
+  boneWire.rotation.z=Math.PI/2;
+  boneWire.scale.set(1.015,1.015,1.015);
+  boneAssembly.add(boneWire);
+
+  // --- metallic locking plate fixed along the shaft (real brushed titanium look) ---
+  const plateMat=new THREE.MeshStandardMaterial({
+    color:0xaab4bd, metalness:0.92, roughness:0.32,
+    envMap:studioEnvMap, envMapIntensity:1.35
+  });
+  const plateGeo=new THREE.BoxGeometry(9.4, 1.25, 0.4);
+  const plate=new THREE.Mesh(plateGeo, plateMat);
+  plate.position.set(0, 0, 0.98);
+  boneAssembly.add(plate);
+
+  // milled bevel strips along the plate's long edges (reads as a machined chamfer)
+  const bevelMat=new THREE.MeshStandardMaterial({color:0x7c8791, metalness:0.9, roughness:0.4, envMap:studioEnvMap, envMapIntensity:1.1});
+  [0.68,-0.68].forEach(yOff=>{
+    const bevel=new THREE.Mesh(new THREE.BoxGeometry(9.4,0.1,0.42), bevelMat);
+    bevel.position.set(0,yOff,0.98);
+    bevel.rotation.x=yOff>0?0.28:-0.28;
+    boneAssembly.add(bevel);
+  });
+
+  // hole insets + real titanium locking screws through the plate
+  const holeMat=new THREE.MeshStandardMaterial({color:0x0a0e14, metalness:0.5, roughness:0.55, envMap:studioEnvMap, envMapIntensity:0.6});
+  const screwMat=new THREE.MeshStandardMaterial({color:0x8f9aa4, metalness:0.95, roughness:0.22, envMap:studioEnvMap, envMapIntensity:1.4});
+  const headMat=new THREE.MeshStandardMaterial({color:0xc3cbd2, metalness:0.95, roughness:0.18, envMap:studioEnvMap, envMapIntensity:1.5});
+  const holeXs=[-3.9,-2.5,-1.1,0.3,1.7,3.1,4.3];
+  holeXs.forEach(x=>{
+    const hole=new THREE.Mesh(new THREE.CylinderGeometry(0.17,0.17,0.44,14), holeMat);
+    hole.rotation.x=Math.PI/2;
+    hole.position.set(x,0,0.98);
+    boneAssembly.add(hole);
+
+    const screw=new THREE.Mesh(new THREE.CylinderGeometry(0.13,0.13,1.9,12), screwMat);
+    screw.rotation.x=Math.PI/2;
+    screw.position.set(x,0,0.55);
+    boneAssembly.add(screw);
+
+    const head=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.2,0.14,6), headMat);
+    head.rotation.x=Math.PI/2;
+    head.position.set(x,0,1.24);
+    boneAssembly.add(head);
+  });
+
+  // scanning sweep plane — a thin cyan light band that travels the length of the implant, radar/CT-scanner style
+  const sweepGeo=new THREE.PlaneGeometry(0.5, 5.2);
+  const sweepMat=new THREE.MeshBasicMaterial({color:0x00d9ff, transparent:true, opacity:0.28, side:THREE.DoubleSide, blending:THREE.AdditiveBlending, depthWrite:false});
+  const sweep=new THREE.Mesh(sweepGeo, sweepMat);
+  sweep.rotation.y=Math.PI/2;
+  boneAssembly.add(sweep);
+
+  // invisible anchor markers used to project technical spec labels onto the 2D overlay
+  const annoDefs=[
+    {key:'titanium', pos:[-2.5, 1.0, 1.35]},
+    {key:'screw',    pos:[1.7, 0.9, 1.35]},
+    {key:'steel',    pos:[4.3, -0.9, 1.1]},
+    {key:'sterile',  pos:[-6.6, 0.4, 0.9]}
+  ];
+  const annoMarkers=annoDefs.map(d=>{
+    const m=new THREE.Object3D();
+    m.position.set(d.pos[0], d.pos[1], d.pos[2]);
+    boneAssembly.add(m);
+    return {key:d.key, obj:m};
+  });
+
+  boneAssembly.scale.set(0.62,0.62,0.62);
+  group.add(boneAssembly);
+
+  // orbiting rings (scan-halo accents)
+  for(let i=0;i<3;i++){
+    const ringGeo=new THREE.TorusGeometry(8.5+i*1.6, 0.045, 8, 90);
+    const ringMat=new THREE.MeshBasicMaterial({color:0x3b6bff, transparent:true, opacity:0.35-i*0.08});
+    const ring=new THREE.Mesh(ringGeo, ringMat);
+    ring.rotation.x=Math.PI/2 + i*0.5;
+    ring.rotation.y=i*0.7;
+    ring.userData.speed=0.0007+i*0.0004;
+    group.add(ring);
+  }
+
+  // particle field
+  const pCount=700;
+  const pGeo=new THREE.BufferGeometry();
+  const positions=new Float32Array(pCount*3);
+  for(let i=0;i<pCount;i++){
+    const r=22+Math.random()*30;
+    const theta=Math.random()*Math.PI*2;
+    const phi=Math.acos((Math.random()*2)-1);
+    positions[i*3]=r*Math.sin(phi)*Math.cos(theta);
+    positions[i*3+1]=r*Math.sin(phi)*Math.sin(theta);
+    positions[i*3+2]=r*Math.cos(phi);
+  }
+  pGeo.setAttribute('position', new THREE.BufferAttribute(positions,3));
+  const pMat=new THREE.PointsMaterial({color:0x00d9ff, size:0.11, transparent:true, opacity:0.55, sizeAttenuation:true});
+  const particles=new THREE.Points(pGeo, pMat);
+  scene.add(particles);
+
+  // mouse parallax
+  let targetX=0, targetY=0;
+  window.addEventListener('mousemove',(e)=>{
+    targetX=(e.clientX/window.innerWidth-0.5);
+    targetY=(e.clientY/window.innerHeight-0.5);
+  });
+
+  // build DOM labels for the technical spec annotations
+  const ANNO_TEXT={
+    titanium:'Ti-6Al-4V Titanium Alloy',
+    screw:'Locking Screw · Ø4.0mm',
+    steel:'Surgical Steel · SS 316L',
+    sterile:'Gamma-Sterilized · OR Ready'
+  };
+  const heroAnnoWrap=document.getElementById('heroAnnotations');
+  const annoEls=annoMarkers.map(a=>{
+    const el=document.createElement('div');
+    el.className='hero-annotation';
+    el.innerHTML=`<span class="dot"></span><span class="aline"></span><span class="atxt">${ANNO_TEXT[a.key]}</span>`;
+    heroAnnoWrap.appendChild(el);
+    return {marker:a.obj, el};
+  });
+  const annoCenter=new THREE.Vector3();
+  const annoWorld=new THREE.Vector3();
+
+  let clock=new THREE.Clock();
+  function animate(){
+    requestAnimationFrame(animate);
+    const t=clock.getElapsedTime();
+    group.rotation.y=t*0.18 + targetX*0.6;
+    group.rotation.x=Math.sin(t*0.15)*0.15 + targetY*0.4;
+    particles.rotation.y=t*0.02;
+    group.children.forEach(c=>{ if(c.userData.speed){ c.rotation.z+=c.userData.speed*4; } });
+    camera.position.x += (targetX*3 - camera.position.x)*0.02;
+    camera.position.y += (-targetY*3 - camera.position.y)*0.02;
+    camera.lookAt(0,0,0);
+
+    // sweep the scan band back and forth along the implant
+    sweep.position.x = Math.sin(t*0.6) * 6.8;
+    sweep.material.opacity = 0.16 + Math.abs(Math.sin(t*1.2))*0.14;
+
+    // project technical annotation markers to screen space
+    boneAssembly.getWorldPosition(annoCenter);
+    const canvasW=canvas.parentElement.clientWidth, canvasH=canvas.parentElement.clientHeight;
+    annoEls.forEach(a=>{
+      a.marker.getWorldPosition(annoWorld);
+      const normal=annoWorld.clone().sub(annoCenter).normalize();
+      const toCam=camera.position.clone().sub(annoWorld).normalize();
+      const facing=normal.dot(toCam);
+      if(facing>-0.15){
+        const ndc=annoWorld.clone().project(camera);
+        const x=(ndc.x*0.5+0.5)*canvasW;
+        const y=(-(ndc.y*0.5)+0.5)*canvasH;
+        a.el.style.transform=`translate(${x}px, ${y}px) translateY(-50%)`;
+        a.el.style.opacity=Math.min(1,(facing+0.15)*1.8).toFixed(2);
+      } else {
+        a.el.style.opacity=0;
+      }
+    });
+
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+
+// ================= ABOUT SECTION MINI 3D =================
+(function(){
+  const canvas=document.getElementById('about-canvas');
+  const renderer=new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  camera.position.set(0,0,12);
+
+  function resize(){
+    const w=canvas.parentElement.clientWidth, h=canvas.parentElement.clientHeight;
+    renderer.setSize(w,h,false);
+    camera.aspect=w/h; camera.updateProjectionMatrix();
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  scene.add(new THREE.AmbientLight(0x2a3a4e, 1.3));
+  const l1=new THREE.PointLight(0xeaf6ff, 2.8, 60); l1.position.set(8,6,9); scene.add(l1);
+  const l2=new THREE.PointLight(0x3b6bff, 1.4, 60); l2.position.set(-8,-4,6); scene.add(l2);
+  const l3=new THREE.PointLight(0x00d9ff, 1.6, 60); l3.position.set(-3,8,-6); scene.add(l3);
+
+  // "implant plate" made of a bar with screw holes (cylinders) — real brushed-titanium look
+  const boneGroup=new THREE.Group();
+  const barGeo=new THREE.BoxGeometry(6.2,0.9,0.35,1,1,1);
+  const barMat=new THREE.MeshStandardMaterial({color:0xaab4bd, metalness:0.9, roughness:0.3});
+  const bar=new THREE.Mesh(barGeo, barMat);
+  boneGroup.add(bar);
+  for(let i=-2;i<=2;i++){
+    const holeGeo=new THREE.CylinderGeometry(0.16,0.16,0.5,16);
+    const holeMat=new THREE.MeshStandardMaterial({color:0x0a0e14, metalness:0.4, roughness:0.6});
+    const hole=new THREE.Mesh(holeGeo, holeMat);
+    hole.rotation.x=Math.PI/2;
+    hole.position.x=i*1.1;
+    boneGroup.add(hole);
+  }
+  // screws — machined steel, not glowing
+  for(let i=-2;i<=2;i+=2){
+    const screwGeo=new THREE.CylinderGeometry(0.2,0.2,1.6,12);
+    const screwMat=new THREE.MeshStandardMaterial({color:0x9aa4ad, metalness:0.95, roughness:0.22});
+    const screw=new THREE.Mesh(screwGeo, screwMat);
+    screw.rotation.x=Math.PI/2;
+    screw.position.set(i*1.1, 0, 1.1);
+    boneGroup.add(screw);
+  }
+  scene.add(boneGroup);
+
+  let clock=new THREE.Clock();
+  function animate(){
+    requestAnimationFrame(animate);
+    const t=clock.getElapsedTime();
+    boneGroup.rotation.y=t*0.35;
+    boneGroup.rotation.x=Math.sin(t*0.4)*0.2;
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+
+// ================= GLOBAL CLIENTS GLOBE =================
+(function(){
+  const wrap=document.getElementById('globeCanvasWrap');
+  if(!wrap) return;
+  const canvas=document.getElementById('globe-canvas');
+  const labelsWrap=document.getElementById('globeLabels');
+  const countryListEl=document.getElementById('countryList');
+
+  const COUNTRIES=[
+    {name:'India',  lat:20.59, lng:78.96,  hq:true},
+    {name:'Afghanistan', lat:33.94, lng:67.71},
+    {name:'Malaysia',    lat:4.21,  lng:101.98},
+    {name:'Kenya',        lat:-0.02, lng:37.91},
+    {name:'Ukraine',      lat:48.38, lng:31.17},
+    {name:'Turkey',       lat:38.96, lng:35.24},
+    {name:'Nigeria',      lat:9.08,  lng:8.68},
+    {name:'Djibouti',     lat:11.83, lng:42.59},
+    {name:'Sudan',        lat:12.86, lng:30.22}
+  ];
+
+  const renderer=new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(42, 1, 0.1, 100);
+  camera.position.set(0,0,13.5);
+
+  function resize(){
+    const w=wrap.clientWidth, h=wrap.clientHeight;
+    renderer.setSize(w,h,false);
+    camera.aspect=w/h; camera.updateProjectionMatrix();
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  scene.add(new THREE.AmbientLight(0x22304a, 1.5));
+  const gKey=new THREE.PointLight(0x00d9ff, 2.6, 60); gKey.position.set(8,6,10); scene.add(gKey);
+  const gFill=new THREE.PointLight(0x3b6bff, 1.8, 60); gFill.position.set(-9,-5,6); scene.add(gFill);
+
+  const R=5;
+  const globeGroup=new THREE.Group();
+  scene.add(globeGroup);
+
+  // solid inner sphere
+  const coreMat=new THREE.MeshStandardMaterial({color:0x0a1428, metalness:0.35, roughness:0.75, transparent:true, opacity:0.92});
+  const core=new THREE.Mesh(new THREE.SphereGeometry(R-0.06,40,28), coreMat);
+  globeGroup.add(core);
+
+  // lat/long grid wireframe
+  const gridMat=new THREE.MeshBasicMaterial({color:0x00d9ff, wireframe:true, transparent:true, opacity:0.16});
+  const grid=new THREE.Mesh(new THREE.SphereGeometry(R,24,16), gridMat);
+  globeGroup.add(grid);
+
+  // outer atmosphere glow
+  const glowMat=new THREE.MeshBasicMaterial({color:0x00d9ff, transparent:true, opacity:0.08, side:THREE.BackSide});
+  const glow=new THREE.Mesh(new THREE.SphereGeometry(R*1.12,32,24), glowMat);
+  globeGroup.add(glow);
+
+  function latLngToVec3(lat,lng,radius){
+    const phi=(90-lat)*(Math.PI/180);
+    const theta=(lng+180)*(Math.PI/180);
+    return new THREE.Vector3(
+      -radius*Math.sin(phi)*Math.cos(theta),
+       radius*Math.cos(phi),
+       radius*Math.sin(phi)*Math.sin(theta)
+    );
+  }
+
+  const pinMat=new THREE.MeshStandardMaterial({color:0x00d9ff, emissive:0x00d9ff, emissiveIntensity:0.9, metalness:0.4, roughness:0.3});
+  const hqMat=new THREE.MeshStandardMaterial({color:0xffcf5c, emissive:0xffcf5c, emissiveIntensity:1.0, metalness:0.4, roughness:0.3});
+  const stickMat=new THREE.MeshBasicMaterial({color:0x00d9ff, transparent:true, opacity:0.6});
+  const hqStickMat=new THREE.MeshBasicMaterial({color:0xffcf5c, transparent:true, opacity:0.7});
+
+  const pins=[];
+  COUNTRIES.forEach(c=>{
+    const pos=latLngToVec3(c.lat, c.lng, R);
+    const normal=pos.clone().normalize();
+    const quat=new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), normal);
+
+    const pinGroup=new THREE.Group();
+    pinGroup.position.copy(pos);
+    pinGroup.quaternion.copy(quat);
+
+    const stick=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.02,0.42,8), c.hq?hqStickMat:stickMat);
+    stick.position.y=0.21;
+    pinGroup.add(stick);
+
+    const tip=new THREE.Mesh(new THREE.SphereGeometry(c.hq?0.12:0.09,14,14), c.hq?hqMat:pinMat);
+    tip.position.y=0.44;
+    pinGroup.add(tip);
+
+    // pulse ring flat on surface
+    const ring=new THREE.Mesh(new THREE.RingGeometry(0.14,0.19,20), new THREE.MeshBasicMaterial({color:c.hq?0xffcf5c:0x00d9ff, transparent:true, opacity:0.5, side:THREE.DoubleSide}));
+    ring.rotation.x=-Math.PI/2;
+    ring.position.y=0.01;
+    pinGroup.add(ring);
+
+    globeGroup.add(pinGroup);
+
+    const label=document.createElement('div');
+    label.className='globe-pin-label'+(c.hq?' hq':'');
+    label.textContent=c.hq? c.name+' — HQ' : c.name;
+    labelsWrap.appendChild(label);
+
+    pins.push({data:c, tip, ring, label, baseLocal:pos.clone()});
+  });
+
+  // build country chip list (click to focus)
+  COUNTRIES.forEach((c,i)=>{
+    const chip=document.createElement('div');
+    chip.className='country-chip'+(c.hq?' hq':'');
+    chip.innerHTML=`<span class="dot"></span>${c.name}${c.hq?' (HQ)':''}`;
+    chip.addEventListener('click', ()=>focusCountry(i));
+    countryListEl.appendChild(chip);
+  });
+  const chips=countryListEl.querySelectorAll('.country-chip');
+
+  let targetRotY=0.4, autoRotate=true, focusLockUntil=0;
+  function focusCountry(i){
+    const p=pins[i].baseLocal;
+    targetRotY=Math.atan2(-p.x, p.z);
+    autoRotate=false;
+    focusLockUntil=performance.now()+4200;
+    chips.forEach(ch=>ch.classList.remove('active'));
+    chips[i].classList.add('active');
+  }
+
+  // drag to rotate
+  let isDragging=false, lastX=0, lastY=0;
+  let dragVelocity=0;
+  canvas.addEventListener('pointerdown', e=>{
+    isDragging=true; autoRotate=false; lastX=e.clientX; lastY=e.clientY;
+    canvas.setPointerCapture(e.pointerId);
+  });
+  canvas.addEventListener('pointermove', e=>{
+    if(!isDragging)return;
+    const dx=e.clientX-lastX, dy=e.clientY-lastY;
+    globeGroup.rotation.y+=dx*0.006;
+    globeGroup.rotation.x=Math.max(-0.9,Math.min(0.9, globeGroup.rotation.x+dy*0.006));
+    targetRotY=globeGroup.rotation.y;
+    dragVelocity=dx*0.006;
+    lastX=e.clientX; lastY=e.clientY;
+  });
+  window.addEventListener('pointerup', ()=>{
+    if(!isDragging)return;
+    isDragging=false;
+    focusLockUntil=performance.now()+2500;
+  });
+
+  const raycaster=new THREE.Raycaster();
+  const camDirWorld=new THREE.Vector3();
+  const vTip=new THREE.Vector3();
+
+  let clock=new THREE.Clock();
+  function animate(){
+    requestAnimationFrame(animate);
+    const now=performance.now();
+    const t=clock.getElapsedTime();
+
+    if(now>focusLockUntil && !isDragging){ autoRotate=true; }
+
+    if(autoRotate){
+      globeGroup.rotation.y+=0.0022;
+      targetRotY=globeGroup.rotation.y;
+    } else if(!isDragging){
+      // smooth angle interpolation toward target (shortest path)
+      let diff=targetRotY-globeGroup.rotation.y;
+      diff=Math.atan2(Math.sin(diff), Math.cos(diff));
+      globeGroup.rotation.y+=diff*0.06;
+    }
+
+    glow.rotation.y=globeGroup.rotation.y*0.5;
+
+    camera.getWorldDirection(camDirWorld);
+    const canvasW=wrap.clientWidth, canvasH=wrap.clientHeight;
+
+    pins.forEach(p=>{
+      p.tip.getWorldPosition(vTip);
+      const normalWorld=vTip.clone().normalize();
+      const toCam=camera.position.clone().normalize();
+      const facing=normalWorld.dot(toCam);
+      // gentle pulse
+      const s=1+Math.sin(t*2.4)*0.15;
+      p.ring.scale.set(s,s,s);
+
+      if(facing>0.05){
+        const ndc=vTip.clone().project(camera);
+        const x=(ndc.x*0.5+0.5)*canvasW;
+        const y=(-(ndc.y*0.5)+0.5)*canvasH;
+        p.label.style.left=x+'px';
+        p.label.style.top=y+'px';
+        p.label.style.opacity=Math.min(1,(facing-0.05)*2.2).toFixed(2);
+      } else {
+        p.label.style.opacity=0;
+      }
+    });
+
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+</script>
+</body>
+</html>
