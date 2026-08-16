@@ -238,21 +238,30 @@ section{position:relative;padding:120px 5%;}
 .partner-block p+p{margin-top:14px;}
 
 /* products */
-.cat-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px;}
-.cat-tab{padding:10px 20px;border:1px solid var(--line);border-radius:30px;font-size:12.5px;letter-spacing:.4px;color:var(--muted);cursor:pointer;transition:.3s;background:rgba(255,255,255,0.02);white-space:nowrap;user-select:none;}
-.cat-tab:hover{color:var(--white);border-color:rgba(0,217,255,0.3);}
-.cat-tab.active{background:linear-gradient(90deg,var(--cyan),var(--blue));color:#00121c;border-color:transparent;font-weight:700;}
-.cat-tab .count{opacity:.75;margin-left:5px;font-size:11px;}
+.cat-accordion{display:flex;flex-direction:column;gap:14px;}
+.cat-acc-item{border:1px solid var(--line);border-radius:16px;background:linear-gradient(155deg,var(--panel),var(--bg2));overflow:hidden;transition:border-color .3s;}
+.cat-acc-item.open{border-color:rgba(0,217,255,0.3);}
+.cat-acc-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 26px;cursor:pointer;user-select:none;}
+.cat-acc-header:hover{background:rgba(255,255,255,0.03);}
+.cat-acc-title{display:flex;align-items:center;gap:12px;font-size:16px;font-weight:700;color:var(--white);}
+.cat-acc-count{font-family:var(--mono);font-size:11.5px;color:var(--cyan);background:rgba(0,217,255,0.08);border:1px solid rgba(0,217,255,0.25);border-radius:20px;padding:3px 10px;font-weight:600;}
+.cat-acc-chevron{width:18px;height:18px;color:var(--muted);transition:transform .35s ease;flex-shrink:0;}
+.cat-acc-item.open .cat-acc-chevron{transform:rotate(180deg);color:var(--cyan);}
+.cat-acc-panel{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.4,0,.2,1);}
+.cat-acc-item.open .cat-acc-panel{max-height:5000px;}
+.cat-acc-panel-inner{padding:2px 26px 28px;display:grid;grid-template-columns:repeat(4,1fr);gap:22px;}
+@media(max-width:1100px){.cat-acc-panel-inner{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:800px){.cat-acc-panel-inner{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:600px){
+  .cat-acc-header{padding:16px 18px;}
+  .cat-acc-title{font-size:14px;gap:8px;}
+  .cat-acc-panel-inner{grid-template-columns:1fr;padding:2px 16px 22px;gap:14px;}
+}
 
 .product-search{display:flex;align-items:center;gap:10px;margin-bottom:36px;border:1px solid var(--line);border-radius:30px;padding:11px 20px;max-width:360px;background:rgba(255,255,255,0.02);transition:border-color .3s;}
 .product-search:focus-within{border-color:var(--cyan);}
 .product-search input{background:none;border:none;outline:none;color:var(--white);font-family:'Inter';font-size:13px;width:100%;}
 .product-search svg{width:16px;height:16px;color:var(--muted);flex-shrink:0;}
-
-.products-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;}
-@media(max-width:1100px){.products-grid{grid-template-columns:repeat(3,1fr);}}
-@media(max-width:800px){.products-grid{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:520px){.products-grid{grid-template-columns:1fr;}}
 
 .product-card{
   position:relative;border:1px solid var(--line);border-radius:16px;overflow:hidden;
@@ -434,7 +443,7 @@ footer{border-top:1px solid var(--line);padding:50px 5% 26px;}
 
 @media(max-width:640px){
   section{padding:80px 5%;}
-  .products-grid,.stats-grid{gap:14px;}
+  .stats-grid{gap:14px;}
 }
 </style>
 </head>
@@ -577,10 +586,9 @@ footer{border-top:1px solid var(--line);padding:50px 5% 26px;}
     <input type="text" id="productSearch" placeholder="Search implants by name…">
   </div>
 
-  <div class="cat-tabs reveal" id="catTabs"></div>
   <div class="results-count" id="resultsCount"></div>
-  <div class="products-grid" id="productsGrid">
-    <!-- cards injected by JS -->
+  <div class="cat-accordion" id="catAccordion">
+    <!-- category accordion items injected by JS -->
   </div>
 </section>
 
@@ -870,74 +878,79 @@ CATS.forEach(c=>{
   (CATALOG[c.slug]||[]).forEach(p=>ALL_PRODUCTS.push(Object.assign({}, p, {catSlug:c.slug, catLabel:c.label})));
 });
 
-let activeCat = 'all';
 let searchTerm = '';
+const expandedCats = new Set(); // categories the user has manually opened
 
-const grid = document.getElementById('productsGrid');
-const tabsEl = document.getElementById('catTabs');
+const accordionEl = document.getElementById('catAccordion');
 const resultsCountEl = document.getElementById('resultsCount');
 const searchInput = document.getElementById('productSearch');
 
-// build tabs
-function buildTabs(){
-  const allTab = document.createElement('div');
-  allTab.className='cat-tab active';
-  allTab.dataset.slug='all';
-  allTab.innerHTML=`All Implants <span class="count">${ALL_PRODUCTS.length}</span>`;
-  tabsEl.appendChild(allTab);
-  CATS.forEach(c=>{
-    const count=(CATALOG[c.slug]||[]).length;
-    const tab=document.createElement('div');
-    tab.className='cat-tab';
-    tab.dataset.slug=c.slug;
-    tab.innerHTML=`${c.label} <span class="count">${count}</span>`;
-    tabsEl.appendChild(tab);
-  });
-  tabsEl.addEventListener('click', e=>{
-    const t=e.target.closest('.cat-tab');
-    if(!t)return;
-    tabsEl.querySelectorAll('.cat-tab').forEach(x=>x.classList.remove('active'));
-    t.classList.add('active');
-    activeCat=t.dataset.slug;
-    renderGrid();
-  });
+function productCardHTML(p){
+  const codeLabel = (p.specs && p.specs[0] && p.specs[0].code) ? p.specs[0].code : (p.productCode || p.catLabel);
+  return `
+    <div class="product-img">
+      <img src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML='<div class=&quot;img-fallback&quot;>${p.name.replace(/'/g,"&#39;")}</div>'">
+    </div>
+    <div class="product-body">
+      <h4>${p.name}</h4>
+      <span class="pcode">${codeLabel}</span>
+      <div class="product-more">Read More →</div>
+    </div>`;
 }
 
-function renderGrid(){
-  let list = activeCat==='all' ? ALL_PRODUCTS : ALL_PRODUCTS.filter(p=>p.catSlug===activeCat);
-  if(searchTerm.trim()){
-    const s=searchTerm.trim().toLowerCase();
-    list = list.filter(p=>p.name.toLowerCase().includes(s));
-  }
-  resultsCountEl.textContent = `Showing ${list.length} of ${ALL_PRODUCTS.length} implant products`;
-  grid.innerHTML='';
-  if(list.length===0){
-    grid.innerHTML='<div class="no-results">No implants match your search. Try a different keyword.</div>';
-    return;
-  }
-  list.forEach((p,idx)=>{
-    const card=document.createElement('div');
-    card.className='product-card reveal';
-    const codeLabel = (p.specs && p.specs[0] && p.specs[0].code) ? p.specs[0].code : (p.productCode || p.catLabel);
-    card.innerHTML=`
-      <div class="product-img">
-        <img src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML='<div class=&quot;img-fallback&quot;>${p.name.replace(/'/g,"&#39;")}</div>'">
+// category accordion — collapsed by default so the catalog doesn't dump 90+ cards into one long scroll on phone
+function renderAccordion(){
+  const s = searchTerm.trim().toLowerCase();
+  accordionEl.innerHTML = '';
+  let totalShown = 0;
+  let anyCategory = false;
+
+  CATS.forEach(c=>{
+    let list = CATALOG[c.slug] || [];
+    if(s){ list = list.filter(p=>p.name.toLowerCase().includes(s)); }
+    if(s && list.length===0) return; // hide categories with no matches while searching
+    anyCategory = true;
+    totalShown += list.length;
+
+    const isOpen = s ? true : expandedCats.has(c.slug);
+    const item=document.createElement('div');
+    item.className='cat-acc-item reveal'+(isOpen?' open':'');
+    item.innerHTML=`
+      <div class="cat-acc-header">
+        <span class="cat-acc-title">${c.label} <span class="cat-acc-count">${list.length}</span></span>
+        <svg class="cat-acc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
       </div>
-      <div class="product-body">
-        <h4>${p.name}</h4>
-        <span class="pcode">${codeLabel}</span>
-        <div class="product-more">Read More →</div>
-      </div>`;
-    card.addEventListener('click', ()=>openModal(p));
-    grid.appendChild(card);
-    // stagger reveal
-    setTimeout(()=>{ io.observe(card); }, 0);
+      <div class="cat-acc-panel"><div class="cat-acc-panel-inner"></div></div>`;
+    const panelInner=item.querySelector('.cat-acc-panel-inner');
+    list.forEach(p=>{
+      const full=Object.assign({}, p, {catSlug:c.slug, catLabel:c.label});
+      const card=document.createElement('div');
+      card.className='product-card';
+      card.innerHTML=productCardHTML(full);
+      card.addEventListener('click', ()=>openModal(full));
+      panelInner.appendChild(card);
+    });
+    item.querySelector('.cat-acc-header').addEventListener('click', ()=>{
+      if(s) return; // categories stay force-open while a search is active
+      if(expandedCats.has(c.slug)){ expandedCats.delete(c.slug); item.classList.remove('open'); }
+      else { expandedCats.add(c.slug); item.classList.add('open'); }
+    });
+    accordionEl.appendChild(item);
+    io.observe(item);
   });
+
+  if(!anyCategory){
+    accordionEl.innerHTML='<div class="no-results">No implants match your search. Try a different keyword.</div>';
+  }
+
+  resultsCountEl.textContent = s
+    ? `Showing ${totalShown} of ${ALL_PRODUCTS.length} implant products`
+    : `${ALL_PRODUCTS.length} implant products across ${CATS.length} categories — tap a category to browse`;
 }
 
 searchInput.addEventListener('input', e=>{
   searchTerm = e.target.value;
-  renderGrid();
+  renderAccordion();
 });
 
 // ---------- Product modal ----------
@@ -998,8 +1011,7 @@ modal.addEventListener('click', e=>{ if(e.target===modal) closeModal(); });
 document.getElementById('modalEnquire').addEventListener('click', closeModal);
 window.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
 
-buildTabs();
-renderGrid();
+renderAccordion();
 
 // tilt effect (works for both feature cards and product cards)
 document.addEventListener('mousemove', e=>{
@@ -1083,30 +1095,30 @@ function handleSubmit(e){
   }
   const studioEnvMap=buildStudioEnvMap();
 
-  // --- procedural bone surface texture: pale, soft, near-white clinical-render look (à la Auxein product renders) ---
+  // --- procedural bone surface texture: cool grey-blue, wet cinematic-render look ---
   function buildBoneTexture(){
     const c=document.createElement('canvas'); c.width=512; c.height=512;
     const ctx=c.getContext('2d');
     const grad=ctx.createLinearGradient(0,0,0,512);
-    grad.addColorStop(0.00,'#eef0f2');
-    grad.addColorStop(0.22,'#f8f8f6');
-    grad.addColorStop(0.50,'#ffffff');
-    grad.addColorStop(0.78,'#f6f6f3');
-    grad.addColorStop(1.00,'#eceae4');
+    grad.addColorStop(0.00,'#aab6c0');
+    grad.addColorStop(0.22,'#c4ccd4');
+    grad.addColorStop(0.50,'#e4e9ed');
+    grad.addColorStop(0.78,'#bcc5cc');
+    grad.addColorStop(1.00,'#98a4ae');
     ctx.fillStyle=grad; ctx.fillRect(0,0,512,512);
-    // very subtle mottling — just enough surface variation to avoid a flat plastic look
-    for(let i=0;i<2600;i++){
-      const x=Math.random()*512, y=Math.random()*512, r=Math.random()*1.6+0.3;
+    // subtle mottling — reads as porous cortical bone rather than flat plastic
+    for(let i=0;i<3200;i++){
+      const x=Math.random()*512, y=Math.random()*512, r=Math.random()*1.7+0.3;
       ctx.fillStyle = Math.random()<0.5
-        ? `rgba(150,145,135,${(Math.random()*0.05).toFixed(2)})`
-        : `rgba(255,255,255,${(Math.random()*0.10).toFixed(2)})`;
+        ? `rgba(60,72,84,${(Math.random()*0.08).toFixed(2)})`
+        : `rgba(255,255,255,${(Math.random()*0.14).toFixed(2)})`;
       ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
     }
     // faint vertical striations mimicking cortical bone fiber grain
-    ctx.globalAlpha=0.025;
-    for(let i=0;i<70;i++){
+    ctx.globalAlpha=0.05;
+    for(let i=0;i<80;i++){
       const x=Math.random()*512;
-      ctx.strokeStyle='#8a8478';
+      ctx.strokeStyle='#4a5866';
       ctx.lineWidth=Math.random()*1.0+0.2;
       ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x+(Math.random()*24-12),512); ctx.stroke();
     }
@@ -1114,6 +1126,33 @@ function handleSubmit(e){
     const tex=new THREE.CanvasTexture(c);
     tex.wrapS=THREE.RepeatWrapping; tex.wrapT=THREE.RepeatWrapping;
     tex.repeat.set(4,1);
+    return tex;
+  }
+  // glowing cyan fracture/fixation line etched into the bone surface (echoes a lit graft or repair site)
+  function buildBoneEmissiveTexture(){
+    const c=document.createElement('canvas'); c.width=512; c.height=512;
+    const ctx=c.getContext('2d');
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,512,512);
+    function drawCrack(pts,width){
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0], pts[0][1]);
+      for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i][0], pts[i][1]);
+      ctx.strokeStyle='#8ff2ff';
+      ctx.lineWidth=width;
+      ctx.lineCap='round'; ctx.lineJoin='round';
+      ctx.shadowColor='#00d9ff';
+      ctx.shadowBlur=22;
+      ctx.stroke();
+      ctx.stroke(); // second pass deepens the glow core
+      ctx.shadowBlur=0;
+    }
+    drawCrack([[110,130],[145,195],[122,235],[168,300],[140,350],[185,420],[160,470]], 4.5);
+    drawCrack([[145,195],[210,215]], 2.4);
+    drawCrack([[168,300],[230,280]], 2.2);
+    drawCrack([[140,350],[85,368]], 2.2);
+    const tex=new THREE.CanvasTexture(c);
+    tex.wrapS=THREE.RepeatWrapping; tex.wrapT=THREE.RepeatWrapping;
+    tex.repeat.set(2,1); // repeats around the circumference so it stays visible through the auto-rotation
     return tex;
   }
   function buildBoneBumpTexture(){
@@ -1133,6 +1172,7 @@ function handleSubmit(e){
   }
   const boneTexture=buildBoneTexture();
   const boneBumpTexture=buildBoneBumpTexture();
+  const boneEmissiveTexture=buildBoneEmissiveTexture();
 
   // gently bows a lathe-revolved bone geometry along its length (real long bones aren't perfectly straight)
   function applyBoneBow(geo, amount){
@@ -1148,9 +1188,9 @@ function handleSubmit(e){
 
   // lights (studio 3-point setup, tuned for the opaque bone surface)
   scene.add(new THREE.AmbientLight(0x3a4658, 1.0));
-  const key=new THREE.PointLight(0xfff3e0, 1.75, 100); key.position.set(13,11,15); scene.add(key);
+  const key=new THREE.PointLight(0xeaf3ff, 2.3, 100); key.position.set(13,11,15); scene.add(key);
   const fill=new THREE.PointLight(0x3b6bff, 0.85, 100); fill.position.set(-14,-6,10); scene.add(fill);
-  const rim=new THREE.PointLight(0x00d9ff, 1.3, 100); rim.position.set(-4,14,-12); scene.add(rim);
+  const rim=new THREE.PointLight(0x00d9ff, 2.0, 100); rim.position.set(-4,14,-12); scene.add(rim);
   const kicker=new THREE.PointLight(0xffffff, 0.7, 60); kicker.position.set(2,-4,18); scene.add(kicker);
 
   // central piece: a holographic long bone fixed with a real locking plate & screws
@@ -1158,22 +1198,26 @@ function handleSubmit(e){
   scene.add(group);
 
   const boneAssembly=new THREE.Group();
+  boneAssembly.rotation.z=-0.32; // angle the whole assembly like a leg planted at a natural stance, not a flat horizontal bar
 
-  // --- realistic bone silhouette (lathe profile = anatomical long-bone shape: shaft + flared, irregular epiphyses) ---
+  // --- leg-bone silhouette (lathe profile = tibia-like shin bone: broad knee/plateau end, narrow ankle end) ---
   const bonePts=[];
   const boneProfile=[
-    [0.0,-9.4],[1.15,-9.2],[1.95,-8.85],[2.3,-8.35],[2.1,-7.7],[1.55,-6.95],
-    [1.05,-6.2],[0.78,-5.0],[0.64,-2.6],[0.58,0],[0.64,2.6],[0.8,5.0],
-    [1.1,6.15],[1.65,6.95],[2.05,7.6],[2.35,8.15],[1.85,8.7],[1.05,9.15],[0.0,9.4]
+    [0.0,-9.6],[0.9,-9.35],[1.55,-8.95],[1.3,-8.3],[0.92,-7.5],
+    [0.7,-6.3],[0.6,-4.2],[0.56,-1.6],[0.55,0],[0.58,2.0],
+    [0.7,4.2],[0.88,5.8],[1.25,7.05],[1.85,7.95],[2.35,8.55],
+    [2.65,9.0],[2.4,9.3],[1.55,9.5],[0.0,9.7]
   ];
   boneProfile.forEach(p=>bonePts.push(new THREE.Vector2(p[0],p[1])));
   const boneGeo=new THREE.LatheGeometry(bonePts, 48);
   applyBoneBow(boneGeo, 0.3);
-  const boneMat=new THREE.MeshStandardMaterial({
-    map:boneTexture, bumpMap:boneBumpTexture, bumpScale:0.015,
-    color:0xfbfaf7, emissive:0x2a3040, emissiveIntensity:0.12,
-    roughness:0.55, metalness:0.02,
-    envMap:studioEnvMap, envMapIntensity:0.35,
+  const boneMat=new THREE.MeshPhysicalMaterial({
+    map:boneTexture, bumpMap:boneBumpTexture, bumpScale:0.012,
+    color:0xc7d0d8,
+    emissiveMap:boneEmissiveTexture, emissive:0xffffff, emissiveIntensity:2.2,
+    roughness:0.3, metalness:0.05,
+    clearcoat:0.8, clearcoatRoughness:0.15,
+    envMap:studioEnvMap, envMapIntensity:0.7,
     side:THREE.DoubleSide
   });
   const boneMesh=new THREE.Mesh(boneGeo, boneMat);
@@ -1181,9 +1225,10 @@ function handleSubmit(e){
   boneMesh.castShadow=boneMesh.receiveShadow=true;
   boneAssembly.add(boneMesh);
 
-  // --- metallic locking plate fixed along the shaft (real brushed titanium look) ---
-  const plateMat=new THREE.MeshStandardMaterial({
-    color:0xaab4bd, metalness:0.92, roughness:0.32,
+  // --- glowing cyan implant plate fixed along the shaft (echoes a lit graft/fixation element) ---
+  const plateMat=new THREE.MeshPhysicalMaterial({
+    color:0x9fb4bd, emissive:0x00d9ff, emissiveIntensity:0.5,
+    metalness:0.85, roughness:0.28, clearcoat:0.5, clearcoatRoughness:0.2,
     envMap:studioEnvMap, envMapIntensity:1.35
   });
   const plateGeo=new THREE.BoxGeometry(9.4, 1.25, 0.4);
@@ -1251,8 +1296,8 @@ function handleSubmit(e){
     const w=canvas.parentElement.clientWidth;
     if(w<640){ group.scale.setScalar(0.5); group.position.y=-10.5; group.position.x=0; }
     else if(w<900){ group.scale.setScalar(0.62); group.position.y=-7; group.position.x=0; }
-    else if(w<1300){ group.scale.setScalar(0.78); group.position.y=0; group.position.x=3.6; }
-    else { group.scale.setScalar(0.92); group.position.y=0; group.position.x=3.8; }
+    else if(w<1300){ group.scale.setScalar(0.68); group.position.y=0.6; group.position.x=4.6; }
+    else { group.scale.setScalar(0.88); group.position.y=0.3; group.position.x=4.4; }
   }
   layoutForViewport();
   window.addEventListener('resize', layoutForViewport);
