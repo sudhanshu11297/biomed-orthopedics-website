@@ -1083,12 +1083,83 @@ function handleSubmit(e){
   }
   const studioEnvMap=buildStudioEnvMap();
 
-  // lights (studio 3-point setup)
-  scene.add(new THREE.AmbientLight(0x2a3a4e, 1.1));
-  const key=new THREE.PointLight(0xeaf6ff, 3.6, 100); key.position.set(13,11,15); scene.add(key);
-  const fill=new THREE.PointLight(0x3b6bff, 1.6, 100); fill.position.set(-14,-6,10); scene.add(fill);
-  const rim=new THREE.PointLight(0x00d9ff, 2.2, 100); rim.position.set(-4,14,-12); scene.add(rim);
-  const kicker=new THREE.PointLight(0xffffff, 1.4, 60); kicker.position.set(2,-4,18); scene.add(kicker);
+  // --- procedural cortical-bone surface texture (ivory tone, mottled porosity, fiber striations) ---
+  function buildBoneTexture(){
+    const c=document.createElement('canvas'); c.width=512; c.height=512;
+    const ctx=c.getContext('2d');
+    const grad=ctx.createLinearGradient(0,0,0,512);
+    grad.addColorStop(0.00,'#e6d8ba');
+    grad.addColorStop(0.22,'#f1e6c8');
+    grad.addColorStop(0.50,'#f5ecd4');
+    grad.addColorStop(0.78,'#ecdfbe');
+    grad.addColorStop(1.00,'#ddccA4');
+    ctx.fillStyle=grad; ctx.fillRect(0,0,512,512);
+    // mottled speckle for cortical bone porosity
+    for(let i=0;i<4200;i++){
+      const x=Math.random()*512, y=Math.random()*512, r=Math.random()*1.7+0.3;
+      ctx.fillStyle = Math.random()<0.55
+        ? `rgba(120,98,62,${(Math.random()*0.14).toFixed(2)})`
+        : `rgba(255,250,232,${(Math.random()*0.22).toFixed(2)})`;
+      ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+    }
+    // fine vertical striations mimicking cortical bone fiber grain
+    ctx.globalAlpha=0.07;
+    for(let i=0;i<90;i++){
+      const x=Math.random()*512;
+      ctx.strokeStyle='#6b5836';
+      ctx.lineWidth=Math.random()*1.1+0.2;
+      ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x+(Math.random()*24-12),512); ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+    // denser trabecular mottling near the ends (epiphyseal/cancellous zones)
+    [40,472].forEach(cy=>{
+      for(let i=0;i<900;i++){
+        const x=Math.random()*512, y=cy+(Math.random()*90-45), r=Math.random()*1.4+0.3;
+        ctx.fillStyle=`rgba(150,128,88,${(Math.random()*0.16).toFixed(2)})`;
+        ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+      }
+    });
+    const tex=new THREE.CanvasTexture(c);
+    tex.wrapS=THREE.RepeatWrapping; tex.wrapT=THREE.RepeatWrapping;
+    tex.repeat.set(4,1);
+    return tex;
+  }
+  function buildBoneBumpTexture(){
+    const c=document.createElement('canvas'); c.width=256; c.height=256;
+    const ctx=c.getContext('2d');
+    ctx.fillStyle='#808080'; ctx.fillRect(0,0,256,256);
+    for(let i=0;i<5000;i++){
+      const x=Math.random()*256, y=Math.random()*256, r=Math.random()*1.3+0.2;
+      const v=Math.floor(Math.random()*90+50);
+      ctx.fillStyle=`rgb(${v},${v},${v})`;
+      ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+    }
+    const tex=new THREE.CanvasTexture(c);
+    tex.wrapS=THREE.RepeatWrapping; tex.wrapT=THREE.RepeatWrapping;
+    tex.repeat.set(4,1);
+    return tex;
+  }
+  const boneTexture=buildBoneTexture();
+  const boneBumpTexture=buildBoneBumpTexture();
+
+  // gently bows a lathe-revolved bone geometry along its length (real long bones aren't perfectly straight)
+  function applyBoneBow(geo, amount){
+    const pos=geo.attributes.position;
+    for(let i=0;i<pos.count;i++){
+      const y=pos.getY(i);
+      const t=Math.max(0,Math.min(1,(y+9.4)/18.8));
+      pos.setX(i, pos.getX(i)+Math.sin(t*Math.PI)*amount);
+    }
+    pos.needsUpdate=true;
+    geo.computeVertexNormals();
+  }
+
+  // lights (studio 3-point setup, tuned for the opaque bone surface)
+  scene.add(new THREE.AmbientLight(0x3a4658, 1.0));
+  const key=new THREE.PointLight(0xfff3e0, 1.75, 100); key.position.set(13,11,15); scene.add(key);
+  const fill=new THREE.PointLight(0x3b6bff, 0.85, 100); fill.position.set(-14,-6,10); scene.add(fill);
+  const rim=new THREE.PointLight(0x00d9ff, 1.3, 100); rim.position.set(-4,14,-12); scene.add(rim);
+  const kicker=new THREE.PointLight(0xffffff, 0.7, 60); kicker.position.set(2,-4,18); scene.add(kicker);
 
   // central piece: a holographic long bone fixed with a real locking plate & screws
   const group=new THREE.Group();
@@ -1096,29 +1167,34 @@ function handleSubmit(e){
 
   const boneAssembly=new THREE.Group();
 
-  // --- translucent bone silhouette (lathe profile = classic long-bone shape) ---
+  // --- realistic bone silhouette (lathe profile = anatomical long-bone shape: shaft + flared, irregular epiphyses) ---
   const bonePts=[];
   const boneProfile=[
-    [0.0,-9.2],[1.35,-8.7],[2.05,-8.0],[1.9,-7.3],[1.15,-6.3],[0.78,-5.0],
-    [0.66,-2.6],[0.62,0],[0.66,2.6],[0.8,5.0],[1.2,6.3],[2.0,7.3],
-    [2.15,8.0],[1.4,8.7],[0.0,9.2]
+    [0.0,-9.4],[1.15,-9.2],[1.95,-8.85],[2.3,-8.35],[2.1,-7.7],[1.55,-6.95],
+    [1.05,-6.2],[0.78,-5.0],[0.64,-2.6],[0.58,0],[0.64,2.6],[0.8,5.0],
+    [1.1,6.15],[1.65,6.95],[2.05,7.6],[2.35,8.15],[1.85,8.7],[1.05,9.15],[0.0,9.4]
   ];
   boneProfile.forEach(p=>bonePts.push(new THREE.Vector2(p[0],p[1])));
-  const boneGeo=new THREE.LatheGeometry(bonePts, 28);
+  const boneGeo=new THREE.LatheGeometry(bonePts, 48);
+  applyBoneBow(boneGeo, 0.3);
   const boneMat=new THREE.MeshStandardMaterial({
-    color:0xdbe6f0, transparent:true, opacity:0.14, roughness:0.6, metalness:0,
-    side:THREE.DoubleSide, depthWrite:false
+    map:boneTexture, bumpMap:boneBumpTexture, bumpScale:0.03,
+    color:0xe8dbb8, roughness:0.88, metalness:0.02,
+    envMap:studioEnvMap, envMapIntensity:0.1,
+    side:THREE.DoubleSide
   });
   const boneMesh=new THREE.Mesh(boneGeo, boneMat);
   boneMesh.rotation.z=Math.PI/2; // lay the bone flat along X
+  boneMesh.castShadow=boneMesh.receiveShadow=true;
   boneAssembly.add(boneMesh);
 
-  // holographic scan-line wireframe over the bone
-  const boneWireGeo=new THREE.LatheGeometry(bonePts, 20);
-  const boneWireMat=new THREE.MeshBasicMaterial({color:0x00d9ff, wireframe:true, transparent:true, opacity:0.22});
+  // faint holographic scan-line overlay (tech/diagnostic accent over the realistic bone)
+  const boneWireGeo=new THREE.LatheGeometry(bonePts, 26);
+  applyBoneBow(boneWireGeo, 0.3);
+  const boneWireMat=new THREE.MeshBasicMaterial({color:0x00d9ff, wireframe:true, transparent:true, opacity:0.1});
   const boneWire=new THREE.Mesh(boneWireGeo, boneWireMat);
   boneWire.rotation.z=Math.PI/2;
-  boneWire.scale.set(1.015,1.015,1.015);
+  boneWire.scale.set(1.02,1.02,1.02);
   boneAssembly.add(boneWire);
 
   // --- metallic locking plate fixed along the shaft (real brushed titanium look) ---
@@ -1183,8 +1259,47 @@ function handleSubmit(e){
     return {key:d.key, obj:m};
   });
 
+  // --- translucent leg silhouette enclosing the bone + plate (anatomical/X-ray illustration style) ---
+  const legPts=[];
+  const legProfile=[
+    [0.0,-10.6],[2.05,-10.35],[3.15,-9.75],[3.35,-8.9],[2.95,-7.7],
+    [2.6,-6.2],[2.42,-4.4],[2.32,-2.1],[2.28,0],[2.32,2.2],
+    [2.46,4.5],[2.72,6.4],[3.1,8.0],[3.4,9.15],[2.95,10.05],[1.85,10.55],[0.0,10.8]
+  ];
+  legProfile.forEach(p=>legPts.push(new THREE.Vector2(p[0],p[1])));
+  const legGeo=new THREE.LatheGeometry(legPts, 44);
+  applyBoneBow(legGeo, 0.3);
+  const legMat=new THREE.MeshStandardMaterial({
+    color:0xffdfb8, emissive:0x3a2413, emissiveIntensity:0.55,
+    transparent:true, opacity:0.24, roughness:0.5, metalness:0,
+    envMap:studioEnvMap, envMapIntensity:0.2,
+    side:THREE.DoubleSide, depthWrite:false
+  });
+  const legMesh=new THREE.Mesh(legGeo, legMat);
+  legMesh.rotation.z=Math.PI/2;
+  boneAssembly.add(legMesh);
+
+  // faint edge-defining contour lines over the skin (keeps the silhouette readable, clinical-illustration feel)
+  const legWireGeo=new THREE.LatheGeometry(legPts, 22);
+  applyBoneBow(legWireGeo, 0.3);
+  const legWireMat=new THREE.MeshBasicMaterial({color:0xbfe6ef, wireframe:true, transparent:true, opacity:0.05});
+  const legWire=new THREE.Mesh(legWireGeo, legWireMat);
+  legWire.rotation.z=Math.PI/2;
+  legWire.scale.set(1.008,1.008,1.008);
+  boneAssembly.add(legWire);
+
   boneAssembly.scale.set(0.62,0.62,0.62);
   group.add(boneAssembly);
+
+  // on narrow viewports shrink & drop the assembly so it clears the stacked hero copy above it
+  function layoutForViewport(){
+    const w=canvas.parentElement.clientWidth;
+    if(w<640){ group.scale.setScalar(0.5); group.position.y=-10.5; }
+    else if(w<900){ group.scale.setScalar(0.62); group.position.y=-7; }
+    else { group.scale.setScalar(1); group.position.y=0; }
+  }
+  layoutForViewport();
+  window.addEventListener('resize', layoutForViewport);
 
   // orbiting rings (scan-halo accents)
   for(let i=0;i<3;i++){
