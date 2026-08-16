@@ -82,6 +82,7 @@ img{max-width:100%;display:block;}
 
 /* hero technical annotations */
 .hero-annotations{position:absolute;inset:0;z-index:2;pointer-events:none;}
+@media(max-width:640px){.hero-annotations{display:none;}}
 .hero-annotation{position:absolute;top:0;left:0;display:flex;align-items:center;gap:8px;opacity:0;transition:opacity .5s ease;will-change:transform,opacity;}
 .hero-annotation .dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);flex-shrink:0;}
 .hero-annotation .aline{width:24px;height:1px;background:linear-gradient(90deg,var(--cyan),transparent);flex-shrink:0;}
@@ -1291,18 +1292,8 @@ function handleSubmit(e){
   boneAssembly.scale.set(0.62,0.62,0.62);
   group.add(boneAssembly);
 
-  // on narrow viewports shrink & drop the assembly so it clears the stacked hero copy above it
-  function layoutForViewport(){
-    const w=canvas.parentElement.clientWidth;
-    if(w<640){ group.scale.setScalar(0.5); group.position.y=-10.5; group.position.x=0; }
-    else if(w<900){ group.scale.setScalar(0.62); group.position.y=-7; group.position.x=0; }
-    else if(w<1300){ group.scale.setScalar(0.68); group.position.y=0.6; group.position.x=4.6; }
-    else { group.scale.setScalar(0.88); group.position.y=0.3; group.position.x=4.4; }
-  }
-  layoutForViewport();
-  window.addEventListener('resize', layoutForViewport);
-
-  // orbiting rings (scan-halo accents)
+  // orbiting rings (scan-halo accents) — grouped so they can be hidden on small screens
+  const ringsGroup=new THREE.Group();
   for(let i=0;i<3;i++){
     const ringGeo=new THREE.TorusGeometry(8.5+i*1.6, 0.045, 8, 90);
     const ringMat=new THREE.MeshBasicMaterial({color:0x3b6bff, transparent:true, opacity:0.35-i*0.08});
@@ -1310,8 +1301,21 @@ function handleSubmit(e){
     ring.rotation.x=Math.PI/2 + i*0.5;
     ring.rotation.y=i*0.7;
     ring.userData.speed=0.0007+i*0.0004;
-    group.add(ring);
+    ringsGroup.add(ring);
   }
+  group.add(ringsGroup);
+
+  // on narrow viewports shrink & drop the assembly, and hide the rings/tech-tags so the hero doesn't look cluttered
+  function layoutForViewport(){
+    const w=canvas.parentElement.clientWidth;
+    ringsGroup.visible = w>=640;
+    if(w<640){ group.scale.setScalar(0.5); group.position.y=-10.5; group.position.x=0; }
+    else if(w<900){ group.scale.setScalar(0.62); group.position.y=-7; group.position.x=0; }
+    else if(w<1300){ group.scale.setScalar(0.68); group.position.y=0.6; group.position.x=4.6; }
+    else { group.scale.setScalar(0.88); group.position.y=0.3; group.position.x=4.4; }
+  }
+  layoutForViewport();
+  window.addEventListener('resize', layoutForViewport);
 
   // particle field
   const pCount=700;
@@ -1362,7 +1366,7 @@ function handleSubmit(e){
     group.rotation.y=t*0.18 + targetX*0.6;
     group.rotation.x=Math.sin(t*0.15)*0.15 + targetY*0.4;
     particles.rotation.y=t*0.02;
-    group.children.forEach(c=>{ if(c.userData.speed){ c.rotation.z+=c.userData.speed*4; } });
+    ringsGroup.children.forEach(c=>{ if(c.userData.speed){ c.rotation.z+=c.userData.speed*4; } });
     camera.position.x += (targetX*3 - camera.position.x)*0.02;
     camera.position.y += (-targetY*3 - camera.position.y)*0.02;
     camera.lookAt(0,0,0);
